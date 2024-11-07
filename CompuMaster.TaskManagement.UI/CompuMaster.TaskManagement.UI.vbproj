@@ -15,18 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="My Project\Application.Designer.vb">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
+    <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
+    <Folder Include="My Project\" />
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,8 @@
     <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
-    <MyType>WindowsForms</MyType>
+    <UseWinForms>true</UseWinForms>
+    <MyType>Empty</MyType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,18 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="My Project\Application.Designer.vb">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
+    <ProjectReference Include="..\CompuMaster.TaskManagement.UI\CompuMaster.TaskManagement.UI.vbproj" />
   </ItemGroup>
 
 </Project>
