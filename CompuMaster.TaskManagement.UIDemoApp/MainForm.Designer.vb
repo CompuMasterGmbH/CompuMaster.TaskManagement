@@ -31,7 +31,7 @@ Partial Class MainForm
         TestVonLongRunTaskBundlesButton.Name = "TestVonLongRunTaskBundlesButton"
         TestVonLongRunTaskBundlesButton.Size = New Size(233, 23)
         TestVonLongRunTaskBundlesButton.TabIndex = 0
-        TestVonLongRunTaskBundlesButton.Text = "Test-Tasks laden"
+        TestVonLongRunTaskBundlesButton.Text = "Load test tasks"
         TestVonLongRunTaskBundlesButton.UseVisualStyleBackColor = True
         ' 
         ' MainForm
