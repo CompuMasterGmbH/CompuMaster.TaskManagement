@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CompuMaster.TaskManagement.UI\CompuMaster.TaskManagement.UI.WinForms.vbproj" />
+    <ProjectReference Include="..\CompuMaster.TaskManagement.UI.WinForms\CompuMaster.TaskManagement.UI.WinForms.vbproj" />
     <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
   </ItemGroup>
 

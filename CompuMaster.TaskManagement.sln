@@ -6,7 +6,7 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CompuMaster.TaskManagement"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CompuMaster.Test.TaskManagement", "CompuMaster.Test.TaskManagement\CompuMaster.Test.TaskManagement.vbproj", "{AC2C2A31-4ED2-42C0-6162-0A7EB9513733}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CompuMaster.TaskManagement.UI.WinForms", "CompuMaster.TaskManagement.UI\CompuMaster.TaskManagement.UI.WinForms.vbproj", "{0BCE0489-A8FE-4370-AA94-CC632CF0C0BC}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CompuMaster.TaskManagement.UI.WinForms", "CompuMaster.TaskManagement.UI.WinForms\CompuMaster.TaskManagement.UI.WinForms.vbproj", "{0BCE0489-A8FE-4370-AA94-CC632CF0C0BC}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CompuMaster.TaskManagement.UIDemoApp", "CompuMaster.TaskManagement.UIDemoApp\CompuMaster.TaskManagement.UIDemoApp.vbproj", "{3AC16836-2C2A-426B-B5C6-FE65204AE230}"
 EndProject
