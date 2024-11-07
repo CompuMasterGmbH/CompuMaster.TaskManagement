@@ -8,6 +8,7 @@
     <UseWinForms>true</UseWinForms>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <MyType>Empty</MyType>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>
