@@ -6,6 +6,7 @@
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWinForms>true</UseWinForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <MyType>Empty</MyType>
   </PropertyGroup>
 

@@ -12,6 +12,7 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <RootNamespace>CompuMaster.TaskManagement.UI.WinForms</RootNamespace>
     <OutputType>WinExe</OutputType>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
