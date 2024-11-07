@@ -48,12 +48,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.Resources.Extensions" />
-  </ItemGroup>
-
   
 </Project>

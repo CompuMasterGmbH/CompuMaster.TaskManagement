@@ -18,12 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CompuMaster.TaskManagement.UI.WinForms\CompuMaster.TaskManagement.UI.WinForms.vbproj" />
-    <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <Reference Include="System.Resources.Extensions" />
+  <ItemGroup>
+    <ProjectReference Include="..\CompuMaster.TaskManagement.UI.WinForms\CompuMaster.TaskManagement.UI.WinForms.vbproj" />
+    <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
   </ItemGroup>
 
 </Project>
