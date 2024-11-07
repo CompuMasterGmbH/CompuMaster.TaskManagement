@@ -8,26 +8,31 @@ name: Publish/Upload dotnet package on release
 # 2. Attaching of compiled binaries to GitHub release
 
 on:
-    release:
-        types: [created]
+  release:
+    types: [created]
 
-        # Allows you to run this workflow manually from the Actions tab
-        workflow_dispatch:
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
 
 env:
-    # Path to the solution file relative to the root of the project.
-    SOLUTION_FILE_PATH: .
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
 
-    # Name of project configuration for build as well as name of the bin output subdirectory (both must match for "dotnet pack" to find compiled files!)
-    BUILD_CONFIGURATION: Release
-    # Name of build project which creates required output for packaging/deployment
-    BUILD_PROJECT: CompuMaster.Calendar/CompuMaster.Calendar.vbproj
-    # Name of directory (e.g. "bin") containing the subdirectory (e.g. "CI_CD") with all output files (*.dll)
-    BUILD_OUTPUT_BASEDIR: CompuMaster.Calendar/bin
+  # Name of project configuration for build as well as name of the bin output subdirectory (both must match for "dotnet pack" to find compiled files!)
+  BUILD_CONFIGURATION: CI_CD_WIN
+  BUILD_OUTPUT_SUBDIR: CI_CD
+  PACK_CONFIGURATION: CI_CD
+  # Name of build project which creates required output for packaging/deployment
+  BUILD_PROJECT: CompuMaster.TaskManagement/CompuMaster.TaskManagement.vbproj
+  BUILD_PROJECT2: CompuMaster.TaskManagement.UI.WinForms/CompuMaster.TaskManagement.UI.WinForms.vbproj
+  # Name of directory (e.g. "bin") containing the subdirectory (e.g. "CI_CD") with all output files (*.dll)
+  BUILD_OUTPUT_BASEDIR: CompuMaster.TaskManagement/bin
+  BUILD_OUTPUT_BASEDIR2: CompuMaster.TaskManagement.UI.WinForms/bin
+
 
 jobs:
     publish:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
         #if: false # always skip job
 
         steps:
@@ -38,33 +43,45 @@ jobs:
             - name: Setup .NET Core
               uses: actions/setup-dotnet@v4
               with:
-                  dotnet-version: 8.0.x
+                dotnet-version: 8.0.x
 
             - name: Install dependencies
-              run: dotnet restore
+              run: dotnet restore /p:Configuration=${{env.BUILD_CONFIGURATION}}
 
             - name: Build
-              run: dotnet build --configuration=${{env.BUILD_CONFIGURATION}} --no-restore
+              run: dotnet build --configuration=${{env.BUILD_CONFIGURATION}} --no-restore 
 
-            - name: Pack binaries
-              run: |
-                  (cd ${{env.BUILD_OUTPUT_BASEDIR}}/${{env.BUILD_CONFIGURATION}} && zip $OLDPWD/bin.zip -r .)
+            - name: Zip binaries CompuMaster.TaskManagement
+              run: Compress-Archive -DestinationPath bin.zip ${{env.BUILD_OUTPUT_BASEDIR}}/${{env.BUILD_OUTPUT_SUBDIR}}
 
-            - name: Publish binaries
+            - name: Zip binaries CompuMaster.TaskManagement.UI.WinForms
+              run: Compress-Archive -DestinationPath bin-wincontrols.zip ${{env.BUILD_OUTPUT_BASEDIR2}}/${{env.BUILD_OUTPUT_SUBDIR}}
+
+            - name: Publish zipped binaries CompuMaster.TaskManagement
               uses: softprops/action-gh-release@v1
               with:
-                  files: "bin.zip"
+                files: "bin.zip"
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Pack
-              run: dotnet pack --no-build --configuration=${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PROJECT}} --output .
+            - name: Publish zipped binaries CompuMaster.TaskManagement.UI.WinForms
+              uses: softprops/action-gh-release@v1
+              with:
+                files: "bin-wincontrols.zip"
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: PushNuget
-              run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+            - name: Pack CompuMaster.TaskManagement
+              run: dotnet pack --no-build --configuration=${{env.PACK_CONFIGURATION}} ${{env.BUILD_PROJECT}} --output .  
+
+            - name: Pack CompuMaster.TaskManagement.UI.WinForms
+              run: dotnet pack --no-build --configuration=${{env.PACK_CONFIGURATION}} ${{env.BUILD_PROJECT2}} --output .  
+
+            - name: PushNuget CompuMaster.TaskManagement + CompuMaster.TaskManagement.UI.WinForms
+              run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate 
 
             - name: Publish Package Artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: Nupkg Artifacts
-                  path: ./**/*.nupkg
+                name: Nupkg Artifacts
+                path: ./**/*.nupkg
