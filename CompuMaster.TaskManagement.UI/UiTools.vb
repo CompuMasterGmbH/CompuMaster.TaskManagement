@@ -1,6 +1,6 @@
 ﻿Imports CompuMaster.TaskManagement.Exceptions
 
-Friend Module UiTools
+Public Module UITools
 
     Public Delegate Sub TryRunMethod()
     Public Delegate Sub TryRunSwitchWaitCursorMethod(enableWaitCursor As Boolean)

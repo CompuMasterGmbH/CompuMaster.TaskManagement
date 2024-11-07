@@ -53,7 +53,7 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement.git</RepositoryUrl>
 		<Description>.NET library with common methods for managing of (long-running) tasks/jobs with rollback/rollforward feature</Description>
-		<PackageTags>CompuMaster Common Utils TaskManagement Progress Async Task Job Management</PackageTags>
+		<PackageTags>CompuMaster Common Utils TaskManagement Progress Async Parallel Task Job Management</PackageTags>
 		<Authors>CompuMaster GmbH</Authors>
 		<DocumentationFile>CompuMaster.TaskManagement.xml</DocumentationFile>
 		<ImportedNamespaces>CompuMaster.VisualBasicCompatibility=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,CompuMaster.TaskManagement=True</ImportedNamespaces>

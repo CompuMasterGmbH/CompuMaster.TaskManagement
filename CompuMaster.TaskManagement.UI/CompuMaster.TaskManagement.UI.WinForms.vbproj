@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>CompuMaster.TaskManagement.UI.WinForms</RootNamespace>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <StartupObject>Sub Main</StartupObject>

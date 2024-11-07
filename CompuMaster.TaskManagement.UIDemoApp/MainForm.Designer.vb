@@ -22,10 +22,29 @@ Partial Class MainForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container()
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Text = "Form1"
+        TestVonLongRunTaskBundlesButton = New Button()
+        SuspendLayout()
+        ' 
+        ' TestVonLongRunTaskBundlesButton
+        ' 
+        TestVonLongRunTaskBundlesButton.Location = New Point(47, 47)
+        TestVonLongRunTaskBundlesButton.Name = "TestVonLongRunTaskBundlesButton"
+        TestVonLongRunTaskBundlesButton.Size = New Size(233, 23)
+        TestVonLongRunTaskBundlesButton.TabIndex = 0
+        TestVonLongRunTaskBundlesButton.Text = "Test-Tasks laden"
+        TestVonLongRunTaskBundlesButton.UseVisualStyleBackColor = True
+        ' 
+        ' MainForm
+        ' 
+        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleMode = AutoScaleMode.Font
+        ClientSize = New Size(372, 127)
+        Controls.Add(TestVonLongRunTaskBundlesButton)
+        Name = "MainForm"
+        Text = "Task-Management Demo App"
+        ResumeLayout(False)
     End Sub
+
+    Friend WithEvents TestVonLongRunTaskBundlesButton As Button
 
 End Class
