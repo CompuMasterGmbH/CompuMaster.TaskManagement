@@ -34,6 +34,7 @@ Run (long-running) Tasks and optionally visualize them
     * FirstStepsWhichCanBeRolledBack
     * SecondStepsWithoutRollbackOption
     * RollbackSteps
+  * will run only if previous task items completed without critical failures
 * Task bundles 
   * might run 
     * successfull, 
@@ -135,17 +136,17 @@ private void TestVonLongRunTaskBundlesButton_Click(object sender, EventArgs e)
 
 ```VB.NET
 Private Sub TestVonLongRunTaskBundlesButton_Click(sender As Object, e As EventArgs) Handles TestVonLongRunTaskBundlesButton.Click
-               Dim f As MultiTaskProgessForm
-               f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollback)
-               f.Show()
-               f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollbackFailingWithThrownException)
-               f.Show()
-               f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollbackFailingWithLoggedException)
-               f.Show()
-               f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingInCriticalStepsWithoutRollbackPossibility)
-               f.Show()
-               f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleSuccessful)
-               f.Show()
+    Dim f As MultiTaskProgessForm
+    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollback)
+    f.Show()
+    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollbackFailingWithThrownException)
+    f.Show()
+    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollbackFailingWithLoggedException)
+    f.Show()
+    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingInCriticalStepsWithoutRollbackPossibility)
+    f.Show()
+    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleSuccessful)
+    f.Show()
 End Sub
 ```
 
