@@ -1,12 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>2024.11.07.100</Version>
+    <Title>CompuMaster.TaskManagement.UI.WinForms - MIT license edition</Title>
+    <Company>CompuMaster GmbH</Company>
+    <Authors>Jochen Wezel</Authors>
+    <Product>CompuMaster.TaskManagement</Product>
+    <Copyright>2023-2024 CompuMaster GmbH</Copyright>
+    <Version>2024.11.07.100</Version>
+    <Configurations>Debug;CI_CD;Release</Configurations>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
     <RootNamespace>CompuMaster.TaskManagement.UI.WinForms</RootNamespace>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+    <OptionInfer>On</OptionInfer>
+    <OptionStrict>On</OptionStrict>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>logo_64x64.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement.git</RepositoryUrl>
+    <Description>.NET UI library for Windows Forms with common methods for managing of (long-running) tasks/jobs with rollback/rollforward feature</Description>
+    <PackageTags>CompuMaster Common Utils TaskManagement Progress Async Parallel Task Job Management UI Windows Forms</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='CI_CD|net48|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,11 +46,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="My Project\" />
+    <ProjectReference Include="..\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj" />
   </ItemGroup>
 
 </Project>

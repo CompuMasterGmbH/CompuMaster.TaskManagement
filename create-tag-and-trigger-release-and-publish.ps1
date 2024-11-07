@@ -8,7 +8,7 @@ Add-Type -AssemblyName System.Web
 
 ## Constants of project
 [string]$githubProjectUrl = 'https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement/' #must contain trailing slash!
-[string]$masterBranchName = "master" #ususally 'master' or 'main'
+[string]$masterBranchName = "main" #ususally 'master' or 'main'
 [string]$assemblyVersionSourceFilePath = ".\CompuMaster.TaskManagement\CompuMaster.TaskManagement.vbproj"
 [string]$assemblyVersionSourceVersionPattern = '^.*\<Version\>(.*)\<\/Version\>.*$'
 
