@@ -96,7 +96,7 @@ Public Class ProgressingTaskBundle
     Private Async Function RunAllTasksAsync(cancellationToken As Threading.CancellationToken) As Task
         ' Überprüfung auf doppelte Instanzen (Objektidentität)
         Dim duplicates = Tasks.GroupBy(Function(t) t).Where(Function(g) g.Count() > 1).Select(Function(g) g.Key).ToList()
-        If duplicates.Any() Then
+        If duplicates.Count <> 0 Then
             Throw New InvalidOperationException("Doppelte Instanzen von ProgressingTaskItem in der Aufgabenliste gefunden.")
         End If
 

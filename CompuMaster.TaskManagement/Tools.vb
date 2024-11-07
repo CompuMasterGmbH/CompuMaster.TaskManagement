@@ -45,7 +45,7 @@ Friend NotInheritable Class Tools
         ElseIf spaceCountForIndentation > 0 Then 'Add indentation
             Return CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation) & text.Replace(ControlChars.CrLf, ControlChars.CrLf & CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation))
         Else 'Remove indentation
-            If text.StartsWith(CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation)) Then
+            If text.StartsWith(CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation), False, System.Globalization.CultureInfo.InvariantCulture) Then
                 'remove indentation at begin of text
                 Return text.Substring(spaceCountForIndentation).Replace(ControlChars.CrLf & CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation), ControlChars.CrLf)
             Else
@@ -68,7 +68,7 @@ Friend NotInheritable Class Tools
         ElseIf spaceCountForIndentation > 0 Then 'Add indentation
             Return CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation) & text.Replace(lineBreak, lineBreak & CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation))
         Else 'Remove indentation
-            If text.StartsWith(CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation)) Then
+            If text.StartsWith(CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation), False, System.Globalization.CultureInfo.InvariantCulture) Then
                 'remove indentation at begin of text
                 Return text.Substring(spaceCountForIndentation).Replace(lineBreak & CompuMaster.VisualBasicCompatibility.Strings.Space(spaceCountForIndentation), lineBreak)
             Else
@@ -117,9 +117,9 @@ Friend NotInheritable Class Tools
     Public Shared Function PathCombine(absolutePath As String, relativePath As String) As String
         absolutePath = ConvertPathWithDirectorySeparatorsForCurrentPlatform(absolutePath)
         relativePath = ConvertPathWithDirectorySeparatorsForCurrentPlatform(relativePath)
-        If relativePath.StartsWith("." & System.IO.Path.DirectorySeparatorChar) Then
+        If relativePath.StartsWith("." & System.IO.Path.DirectorySeparatorChar, False, System.Globalization.CultureInfo.InvariantCulture) Then
             Return PathCombine(absolutePath, relativePath.Substring(2))
-        ElseIf relativePath.StartsWith(".." & System.IO.Path.DirectorySeparatorChar) Then
+        ElseIf relativePath.StartsWith(".." & System.IO.Path.DirectorySeparatorChar, False, System.Globalization.CultureInfo.InvariantCulture) Then
             Return PathCombine(System.IO.Path.GetDirectoryName(absolutePath), relativePath.Substring(3))
         Else
             Return System.IO.Path.Combine(absolutePath, relativePath)
@@ -172,13 +172,13 @@ Friend NotInheritable Class Tools
             Return Nothing
         ElseIf basePathForRelativePath = Nothing Then
             Return absolutePath
-        ElseIf basePathForRelativePath.EndsWith(System.IO.Path.DirectorySeparatorChar) AndAlso absolutePath.StartsWith(basePathForRelativePath) Then
+        ElseIf basePathForRelativePath.EndsWith(System.IO.Path.DirectorySeparatorChar, False, System.Globalization.CultureInfo.InvariantCulture) AndAlso absolutePath.StartsWith(basePathForRelativePath, False, System.Globalization.CultureInfo.InvariantCulture) Then
             Dim ParentPathChain As String = ""
             For MyCounter As Integer = 1 To parentLevel
                 ParentPathChain &= ".." & System.IO.Path.DirectorySeparatorChar
             Next
             Return ParentPathChain & absolutePath.Replace(basePathForRelativePath, "")
-        ElseIf absolutePath.StartsWith(basePathForRelativePath & System.IO.Path.DirectorySeparatorChar) Then
+        ElseIf absolutePath.StartsWith(basePathForRelativePath & System.IO.Path.DirectorySeparatorChar, False, System.Globalization.CultureInfo.InvariantCulture) Then
             Dim ParentPathChain As String = ""
             For MyCounter As Integer = 1 To parentLevel
                 ParentPathChain &= ".." & System.IO.Path.DirectorySeparatorChar
@@ -302,7 +302,7 @@ Friend NotInheritable Class Tools
         If value = Nothing Then
             Return alternativeChoice
         Else
-            Return value.ToString
+            Return value.ToString(System.Globalization.CultureInfo.InvariantCulture)
         End If
     End Function
 
@@ -407,7 +407,7 @@ Friend NotInheritable Class Tools
     ''' <returns></returns>
     Public Shared Function ReplaceAtEndOfString(text As String, searchValue As String, replacement As String) As String
         If text = Nothing OrElse searchValue = Nothing OrElse text.Length < searchValue.Length Then Return text
-        If text.EndsWith(searchValue) Then
+        If text.EndsWith(searchValue, False, System.Globalization.CultureInfo.InvariantCulture) Then
             Return text.Substring(0, text.Length - searchValue.Length) & replacement
         Else
             Return text

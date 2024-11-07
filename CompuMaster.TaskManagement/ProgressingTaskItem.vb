@@ -3,6 +3,7 @@ Option Strict On
 
 Imports System.Threading
 Imports CompuMaster.TaskManagement.ProgressingTaskStepBase
+Imports CompuMaster.TaskManagement.Exceptions
 
 Public Class ProgressingTaskItem
 
@@ -44,11 +45,11 @@ Public Class ProgressingTaskItem
         ''' <summary>
         ''' Must always run (for e.g. rollback tasks), even if previous tasks failed or were cancelled
         ''' </summary>
-        RunAlways
+        RunAlways = 0
         ''' <summary>
         ''' Run only if previous tasks completed successfully and no cancellation was requested, otherweise skip
         ''' </summary>
-        SkipIfPreviousTasksFailedOrCancelled
+        SkipIfPreviousTasksFailedOrCancelled = 1
     End Enum
 
     ''' <summary>
@@ -178,7 +179,7 @@ Public Class ProgressingTaskItem
     ''' <returns></returns>
     Public Function TotalStepItem(totalStepIndex As Integer) As ProgressingTaskStepBase
         If totalStepIndex < 0 OrElse totalStepIndex >= TotalStepsCount Then
-            Throw New ArgumentOutOfRangeException(NameOf(totalStepIndex), "Argument totalStepIndex=" & totalStepIndex.ToString & ", but allowed range=0.." & TotalStepsCount - 1)
+            Throw New ArgumentOutOfRangeException(NameOf(totalStepIndex), "Argument totalStepIndex=" & totalStepIndex.ToString(System.Globalization.CultureInfo.InvariantCulture) & ", but allowed range=0.." & TotalStepsCount - 1)
         End If
         If totalStepIndex < FirstStepsWhichCanBeRolledBack.Count Then
             Return FirstStepsWhichCanBeRolledBack(totalStepIndex)
@@ -247,7 +248,7 @@ Public Class ProgressingTaskItem
                         Next
                     Catch ex As Exceptions.UserAbortedMessageException
                         'Log exception
-                        LoggedExceptions.Add(New Exception("Step " & _RunningStepNumber.Value & " aborted: " & CurrentStep.StepTitle, ex))
+                        LoggedExceptions.Add(New StepException("Step " & _RunningStepNumber.Value & " aborted: " & CurrentStep.StepTitle, ex))
                         Status = ProgressingTaskItem.ProgressingTaskStatus.Aborting
                         _EndTime = DateTime.Now
 
@@ -255,7 +256,7 @@ Public Class ProgressingTaskItem
                         CreateRollbackTaskItemAndAppendToTaskBundle()
                     Catch ex As Exception
                         'Log exception
-                        LoggedExceptions.Add(New Exception("Step " & _RunningStepNumber.Value & " failed: " & CurrentStep.StepTitle, ex))
+                        LoggedExceptions.Add(New StepException("Step " & _RunningStepNumber.Value & " failed: " & CurrentStep.StepTitle, ex))
                         Status = ProgressingTaskItem.ProgressingTaskStatus.FailingWithRollbackOption
                         _EndTime = DateTime.Now
 
@@ -429,9 +430,9 @@ Public Class ProgressingTaskItem
     Public Function ConsumedTimeStatisticsInfo(Optional fullLength As Boolean = False) As String
         Dim Result As New Text.StringBuilder
         Result.AppendLine("Consumed time statistics for task:")
-        If Me.EstimatedTimeToRun.HasValue Then Result.AppendLine("* Estimated time: " & Me.EstimatedTimeToRun.Value.ToString("d\.hh\:mm\:ss"))
+        If Me.EstimatedTimeToRun.HasValue Then Result.AppendLine("* Estimated time: " & Me.EstimatedTimeToRun.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture))
         'Show consumed time statistics for each step if full length is requested or if there are less than 40 steps
-        If Me.ConsumedTime.HasValue Then Result.AppendLine("* Consumed time: " & Me.ConsumedTime.Value.ToString("d\.hh\:mm\:ss"))
+        If Me.ConsumedTime.HasValue Then Result.AppendLine("* Consumed time: " & Me.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture))
         If Not Me.EstimatedTimeToRun.HasValue AndAlso Not Me.ConsumedTime.HasValue Then Result.AppendLine("* No time information available")
 
         Dim StartIndex As Integer
@@ -449,8 +450,8 @@ Public Class ProgressingTaskItem
             Dim CurrentStep As ProgressingTaskStepBase = Me.TotalStepItem(MyCounter)
             Result.AppendLine()
             Result.AppendLine("Step " & MyCounter + 1 & ": " & CurrentStep.StepTitle)
-            If CurrentStep.EstimatedTimeToRun.HasValue Then Result.AppendLine("* Estimated time: " & CurrentStep.EstimatedTimeToRun.Value.ToString("d\.hh\:mm\:ss"))
-            If CurrentStep.ConsumedTime.HasValue Then Result.AppendLine("* Consumed time: " & CurrentStep.ConsumedTime.Value.ToString("d\.hh\:mm\:ss"))
+            If CurrentStep.EstimatedTimeToRun.HasValue Then Result.AppendLine("* Estimated time: " & CurrentStep.EstimatedTimeToRun.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture))
+            If CurrentStep.ConsumedTime.HasValue Then Result.AppendLine("* Consumed time: " & CurrentStep.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture))
             If Not CurrentStep.EstimatedTimeToRun.HasValue AndAlso Not CurrentStep.ConsumedTime.HasValue Then Result.AppendLine("* No time information available")
         Next
         Return Result.ToString
@@ -517,7 +518,7 @@ Public Class ProgressingTaskItem
     ''' Erstellen eines StackTrace ohne die letzte Methode
     ''' </summary>
     ''' <returns></returns>
-    Private Function GetStackTraceWithoutLastMethod() As String
+    Private Shared Function GetStackTraceWithoutLastMethod() As String
         ' Holen Sie sich den vollständigen StackTrace
         Dim fullStackTrace As String = Environment.StackTrace
 

@@ -34,7 +34,9 @@ Run (long-running) Tasks and optionally visualize them
     * FirstStepsWhichCanBeRolledBack
     * SecondStepsWithoutRollbackOption
     * RollbackSteps
-  * will run only if previous task items completed without critical failures
+  * will run 
+    * only if previous task items completed without critical failures
+    * or always
 * Task bundles 
   * might run 
     * successfull, 

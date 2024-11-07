@@ -67,11 +67,11 @@ Public Class MultiTaskProgessForm
         With Nothing
             Dim ETA = Me.TaskBundle.EstimatedTimeOfArrival
             If ETA.HasValue Then
-                NewFormTitle &= " - ETA: " & ETA.Value.ToString("d\.hh\:mm\:ss")
+                NewFormTitle &= " - ETA: " & ETA.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture)
             Else
                 Dim ETR = Me.TaskBundle.EstimatedTimeToRun
                 If ETR.HasValue Then
-                    NewFormTitle &= " - ETA: " & ETR.Value.ToString("d\.hh\:mm\:ss")
+                    NewFormTitle &= " - ETA: " & ETR.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture)
                 End If
             End If
         End With
@@ -146,7 +146,7 @@ Public Class MultiTaskProgessForm
     Private Sub UpdateProgressBar(control As ProgressingTaskControl, taskItem As ProgressingTaskItem)
         Dim ProgressMaximum As Integer = taskItem.TotalStepsCount * 100
         Dim StepProgressValue As Integer = If(taskItem.RunningStep?.EstimatedTimeToRun.HasValue AndAlso taskItem.RunningStep?.ConsumedTime.HasValue, System.Math.Min(100, CInt(taskItem.RunningStep.ConsumedTime.Value.TotalSeconds / taskItem.RunningStep.EstimatedTimeToRun.Value.TotalSeconds * 100)), 0)
-        Dim StepProgressValueText As String = If(taskItem.RunningStep?.EstimatedTimeToRun.HasValue, " (ca. " & StepProgressValue.ToString() & " %)", "")
+        Dim StepProgressValueText As String = If(taskItem.RunningStep?.EstimatedTimeToRun.HasValue, " (ca. " & StepProgressValue.ToString(System.Globalization.CultureInfo.InvariantCulture) & " %)", "")
         Dim NewProgressValue As Integer = System.Math.Min(ProgressMaximum, taskItem.RunningTotalStepNumber.GetValueOrDefault * 100 + StepProgressValue)
         control.Visible = True
         control.GroupBox.Text = taskItem.TaskTitle
@@ -156,21 +156,21 @@ Public Class MultiTaskProgessForm
             Case ProgressingTaskItem.ProgressingTaskStatus.NotStarted
                 control.LabelStepInfo.Text = "Noch nicht gestartet, insgesamt " & taskItem.TotalStepsCount & " Schritte"
                 If taskItem.EstimatedTimeOfArrival.HasValue Then
-                    control.LabelStepInfo.Text &= System.Environment.NewLine & "ETA: " & taskItem.EstimatedTimeOfArrival.Value.ToString("d\.hh\:mm\:ss") & ""
+                    control.LabelStepInfo.Text &= System.Environment.NewLine & "ETA: " & taskItem.EstimatedTimeOfArrival.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & ""
                 End If
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressInformation)
             Case ProgressingTaskItem.ProgressingTaskStatus.InProgress
                 control.LabelStepInfo.Text = "In Bearbeitung: Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle & StepProgressValueText
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressInformation)
                 If taskItem.EstimatedTimeOfArrival.HasValue Then
-                    control.LabelStepInfo.Text &= System.Environment.NewLine & "ETA: " & taskItem.EstimatedTimeOfArrival.Value.ToString("d\.hh\:mm\:ss") & ""
+                    control.LabelStepInfo.Text &= System.Environment.NewLine & "ETA: " & taskItem.EstimatedTimeOfArrival.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & ""
                 End If
             Case ProgressingTaskItem.ProgressingTaskStatus.FailingInCriticalState
                 control.LabelStepInfo.Text = "Fehlschlag erkannt, aktuell in Bearbeitung: Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle & StepProgressValueText
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressErrors)
                 CType(control, ProgressingTaskControl).GroupBox.BackColor = Color.Red
                 If taskItem.EstimatedTimeOfArrival.HasValue Then
-                    control.LabelStepInfo.Text &= System.Environment.NewLine & "ETA: " & taskItem.EstimatedTimeOfArrival.Value.ToString("d\.hh\:mm\:ss") & ""
+                    control.LabelStepInfo.Text &= System.Environment.NewLine & "ETA: " & taskItem.EstimatedTimeOfArrival.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & ""
                 End If
             Case ProgressingTaskItem.ProgressingTaskStatus.FailingWithRollbackOption
                 control.LabelStepInfo.Text = "Fehlschlag erkannt, aktuell in Bearbeitung: Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle & StepProgressValueText
@@ -181,17 +181,17 @@ Public Class MultiTaskProgessForm
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressErrors)
                 CType(control, ProgressingTaskControl).GroupBox.BackColor = Color.Yellow
             Case ProgressingTaskItem.ProgressingTaskStatus.Completed
-                control.LabelStepInfo.Text = "Erfolgreich abgeschlossen in " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss") & " (d.hh:min:sec)"
+                control.LabelStepInfo.Text = "Erfolgreich abgeschlossen in " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & " (d.hh:min:sec)"
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressInformation)
                 CType(control, ProgressingTaskControl).GroupBox.BackColor = Color.Green
             Case ProgressingTaskItem.ProgressingTaskStatus.FailedWithRollbackOption
-                control.LabelStepInfo.Text = "Fehlgeschlagen nach " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss") & " (d.hh:min:sec): Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle
+                control.LabelStepInfo.Text = "Fehlgeschlagen nach " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & " (d.hh:min:sec): Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressErrors)
                 CType(control, ProgressingTaskControl).GroupBox.BackColor = Color.Yellow
                 control.ProgressBar.Value = control.ProgressBar.Maximum 'stops the animation effect
                 control.ProgressBar.Value = NewProgressValue
             Case ProgressingTaskItem.ProgressingTaskStatus.FailedInCriticalState
-                control.LabelStepInfo.Text = "Fehlgeschlagen nach " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss") & " (d.hh:min:sec): Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle
+                control.LabelStepInfo.Text = "Fehlgeschlagen nach " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & " (d.hh:min:sec): Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressErrors)
                 CType(control, ProgressingTaskControl).GroupBox.BackColor = Color.Red
                 control.ProgressBar.Value = control.ProgressBar.Maximum 'stops the animation effect
@@ -200,7 +200,7 @@ Public Class MultiTaskProgessForm
                 control.LabelStepInfo.Text = "Übersprungen"
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressInformation)
             Case ProgressingTaskItem.ProgressingTaskStatus.Aborted
-                control.LabelStepInfo.Text = "Abgebrochen nach " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss") & " (d.hh:min:sec): Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle
+                control.LabelStepInfo.Text = "Abgebrochen nach " & taskItem.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture) & " (d.hh:min:sec): Schritt " & taskItem.RunningTotalStepNumber.Value & "/" & taskItem.TotalStepsCount & ": " & taskItem.RunningStep.StepTitle
                 SetToolTipForTaskControl(control, taskItem.SummaryText, TaskResultToolTipType.ProgressErrors)
                 CType(control, ProgressingTaskControl).GroupBox.BackColor = Color.Yellow
                 control.ProgressBar.Value = control.ProgressBar.Maximum 'stops the animation effect

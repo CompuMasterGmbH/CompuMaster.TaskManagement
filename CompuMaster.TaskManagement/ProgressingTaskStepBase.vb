@@ -1,4 +1,5 @@
 ﻿Imports CompuMaster.TaskManagement.ProgressingTaskBundle
+Imports CompuMaster.TaskManagement.Exceptions
 
 Public MustInherit Class ProgressingTaskStepBase
 
@@ -51,7 +52,7 @@ Public MustInherit Class ProgressingTaskStepBase
                     Me.Status = ProgressingTaskStepStatus.Failed
                     _EndTime = DateTime.Now
                     Me.FoundException = ex
-                    Throw New Exception("Fehlgeschlagener Einzelschritt: " & StepTitle, ex)
+                    Throw New StepException("Fehlgeschlagener Einzelschritt: " & StepTitle, ex)
                 End Try
             Case ProgressingTaskStepStatus.InProgress
                 Throw New InvalidOperationException("This step is already in progress")
@@ -89,7 +90,7 @@ Public MustInherit Class ProgressingTaskStepBase
         Failed = 3
     End Enum
 
-    Public Status As ProgressingTaskStepStatus = ProgressingTaskStepStatus.NotStarted
+    Public Property Status As ProgressingTaskStepStatus = ProgressingTaskStepStatus.NotStarted
 
     Public Enum ProgressingTaskStepFailAction
         ''' <summary>
@@ -126,7 +127,7 @@ Public MustInherit Class ProgressingTaskStepBase
         CollectedWarnings.Add(New ValueTuple(Of String, String)(warning, stacktrace))
     End Sub
 
-    Private Function GetStackTraceWithoutLastMethod() As String
+    Private Shared Function GetStackTraceWithoutLastMethod() As String
         ' Holen Sie sich den vollständigen StackTrace
         Dim fullStackTrace As String = Environment.StackTrace
 
