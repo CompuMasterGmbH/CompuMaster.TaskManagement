@@ -1,0 +1,95 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>CompuMaster.TaskManagement</RootNamespace>
+		<TargetFrameworks>netstandard2.0;net6.0;net48</TargetFrameworks>
+		<Title>CompuMaster.TaskManagement - MIT license edition</Title>
+		<Company>CompuMaster GmbH</Company>		
+		<Product>CompuMaster.TaskManagement</Product>
+		<Copyright>2005-2024 CompuMaster GmbH</Copyright>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Version>2024.01.16.100</Version>
+		<VBRuntime>Embed</VBRuntime>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{54F9A180-ABB4-4467-98E6-902C417D9571}</ProjectGuid>
+		<FileAlignment>512</FileAlignment>
+		<MyType>Empty</MyType>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<DefineDebug>true</DefineDebug>
+		<DefineTrace>true</DefineTrace>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DocumentationFile>CompuMaster.TaskManagement.xml</DocumentationFile>
+		<NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+		<DefineDebug>false</DefineDebug>
+		<DefineTrace>true</DefineTrace>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\Release\</OutputPath>
+		<DocumentationFile>CompuMaster.TaskManagement.xml</DocumentationFile>
+		<NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup>
+		<OptionExplicit>On</OptionExplicit>
+	</PropertyGroup>
+	<PropertyGroup>
+		<OptionCompare>Binary</OptionCompare>
+	</PropertyGroup>
+	<PropertyGroup>
+		<OptionStrict>Off</OptionStrict>
+	</PropertyGroup>
+	<PropertyGroup>
+		<OptionInfer>On</OptionInfer>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>logo_64x64.png</PackageIcon>
+		<PackageProjectUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement.git</RepositoryUrl>
+		<Description>.NET library with common methods for managing of (long-running) tasks/jobs with rollback/rollforward feature</Description>
+		<PackageTags>CompuMaster Common Utils TaskManagement Progress Async Task Job Management</PackageTags>
+		<Authors>CompuMaster GmbH</Authors>
+		<DocumentationFile>CompuMaster.TaskManagement.xml</DocumentationFile>
+		<ImportedNamespaces>CompuMaster.VisualBasicCompatibility=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,CompuMaster.TaskManagement=True</ImportedNamespaces>
+	</PropertyGroup>
+	<!--ignor warning CA1416 (Validate platform compatibility) if OperatingSystem is Windows-->
+	<PropertyGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">
+		<NoWarn>CA1416</NoWarn>
+	</PropertyGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>CompuMaster.Test.TaskManagement</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+	</ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48'">
+		<Reference Include="System" />
+		<Reference Include="System.Collections" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Xml" />
+		<Reference Include="System.Core" />
+		<Reference Include="System.Linq" />
+		<Reference Include="System.Xml.Linq" />
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="System.Net.Http" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\logo_64x64.png">
+	    <Pack>True</Pack>
+	    <PackagePath></PackagePath>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="CompuMaster.VisualBasicCompatibility" Version="1.0.6" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Import Include="CompuMaster.VisualBasicCompatibility" />
+	</ItemGroup>
+</Project>
