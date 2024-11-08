@@ -39,7 +39,6 @@ Public Class MainForm
         End If
     End Sub
 
-
     Private Sub TestVonLongRunTaskBundlesButton_Click(sender As Object, e As EventArgs) Handles TestVonLongRunTaskBundlesButton.Click
         TryRun(Sub()
                    Dim f As MultiTaskProgessForm
