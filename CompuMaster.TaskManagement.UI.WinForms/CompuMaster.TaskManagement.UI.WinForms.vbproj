@@ -48,6 +48,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\logo_64x64.png" Link="logo_64x64.png">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 
