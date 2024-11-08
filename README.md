@@ -157,9 +157,9 @@ End Sub
 
 #### Running Tasks
 
-![Screenshot of samples for running tasks](Screenshot_dummy_tasks_running.png)
+![Screenshot of samples for running tasks](https://raw.githubusercontent.com/CompuMasterGmbH/CompuMaster.TaskManagement/refs/heads/main/Screenshot_dummy_tasks_running.png)
 
 #### Tasks completed
 
-![Screenshot of samples for finished tasks](Screenshot_dummy_tasks_finished.png)
+![Screenshot of samples for finished tasks](https://raw.githubusercontent.com/CompuMasterGmbH/CompuMaster.TaskManagement/refs/heads/main/Screenshot_dummy_tasks_finished.png)
 

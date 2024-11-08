@@ -7,9 +7,23 @@
     <Authors>Jochen Wezel</Authors>
     <Product>CompuMaster.TaskManagement</Product>
     <Copyright>2023-2024 CompuMaster GmbH</Copyright>
-    <Version>2024.11.07.100</Version>
+    <Version>2024.11.08.100</Version>
     <Configurations>Debug;CI_CD;Release</Configurations>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <OptionStrict>On</OptionStrict>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>logo_64x64.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement.git</RepositoryUrl>
+    <Description>.NET library with common methods for managing of (long-running) tasks/jobs with rollback/rollforward feature</Description>
+    <PackageTags>CompuMaster Common Utils TaskManagement Progress Async Parallel Task Job Management</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <ImportedNamespaces>CompuMaster.VisualBasicCompatibility=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,CompuMaster.TaskManagement=True</ImportedNamespaces>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,28 +49,6 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>CompuMaster.TaskManagement.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionExplicit>On</OptionExplicit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionCompare>Binary</OptionCompare>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionStrict>Off</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionInfer>On</OptionInfer>
-    <OptionStrict>On</OptionStrict>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>logo_64x64.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement.git</RepositoryUrl>
-    <Description>.NET library with common methods for managing of (long-running) tasks/jobs with rollback/rollforward feature</Description>
-    <PackageTags>CompuMaster Common Utils TaskManagement Progress Async Parallel Task Job Management</PackageTags>
-    <DocumentationFile>CompuMaster.TaskManagement.xml</DocumentationFile>
-    <ImportedNamespaces>CompuMaster.VisualBasicCompatibility=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,CompuMaster.TaskManagement=True</ImportedNamespaces>
   </PropertyGroup>
   <!--ignor warning CA1416 (Validate platform compatibility) if OperatingSystem is Windows-->
   <PropertyGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">
@@ -84,6 +76,11 @@
     <None Include="..\logo_64x64.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md" Pack="true" PackagePath="\">
+      <Link>README.md</Link>
+      <PackagePath>/</PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,8 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <MyType>Empty</MyType>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace></RootNamespace>
     <TargetFrameworks>net8.0;net48</TargetFrameworks>
-
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
