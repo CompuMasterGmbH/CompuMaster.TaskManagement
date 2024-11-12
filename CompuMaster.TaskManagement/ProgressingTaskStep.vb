@@ -8,4 +8,8 @@ Public Class ProgressingTaskStep
         MyBase.New(stepTitle, stepAction, estimatedTimeToRun, failAction)
     End Sub
 
+    Public Sub New(stepTitle As String, stepAction As StepActionMethodWithFailAction, estimatedTimeToRun As TimeSpan?)
+        MyBase.New(stepTitle, stepAction, estimatedTimeToRun)
+    End Sub
+
 End Class

@@ -3,18 +3,52 @@ Imports CompuMaster.TaskManagement.Exceptions
 
 Public MustInherit Class ProgressingTaskStepBase
 
+    ''' <summary>
+    ''' Step action item - Step action doesn't need any try-catch handling
+    ''' </summary>
+    ''' <param name="stepTitle"></param>
+    ''' <param name="stepAction"></param>
+    ''' <param name="estimatedTimeToRun"></param>
+    ''' <param name="failAction"></param>
     Public Sub New(stepTitle As String, stepAction As StepActionMethod, estimatedTimeToRun As TimeSpan?, failAction As ProgressingTaskStepFailAction)
+        If failAction = ProgressingTaskStepFailAction.DependingOnResultOfStepActionMethodWithFailAction Then Throw New ArgumentException("Not supported: fail action = " & failAction.ToString, NameOf(failAction))
         Me.StepTitle = stepTitle
         Me.StepAction = stepAction
         Me.EstimatedTimeToRun = estimatedTimeToRun
         Me.FailAction = failAction
     End Sub
 
+    ''' <summary>
+    ''' Step action item - Step action must catch exceptions and assign result ProgressingTaskStepDynamicFailAction
+    ''' </summary>
+    ''' <param name="stepTitle"></param>
+    ''' <param name="stepAction"></param>
+    ''' <param name="estimatedTimeToRun"></param>
+    Protected Sub New(stepTitle As String, stepAction As StepActionMethodWithFailAction, estimatedTimeToRun As TimeSpan?)
+        Me.StepTitle = stepTitle
+        Me.StepActionWithFailAction = stepAction
+        Me.EstimatedTimeToRun = estimatedTimeToRun
+        Me.FailAction = ProgressingTaskStepFailAction.DependingOnResultOfStepActionMethodWithFailAction
+    End Sub
+
+    ''' <summary>
+    ''' A method with actions for this step - Step action doesn't need any try-catch handling
+    ''' </summary>
+    ''' <param name="taskStep"></param>
     Public Delegate Sub StepActionMethod(taskStep As ProgressingTaskStepBase)
+
+    ''' <summary>
+    ''' A method with actions for this step - Step action must catch exceptions and assign FailAction before re-throwing the exception
+    ''' </summary>
+    ''' <param name="taskstep"></param>
+    ''' <returns></returns>
+
+    Public Delegate Function StepActionMethodWithFailAction(taskstep As ProgressingTaskStepBase) As ProgressingTaskStepDynamicFailAction
 
     Public Property ParentTask As ProgressingTaskItem
     Public Property StepTitle As String
     Public Property StepAction As StepActionMethod
+    Public Property StepActionWithFailAction As StepActionMethodWithFailAction
     Public Property EstimatedTimeToRun As TimeSpan?
 
     Public ReadOnly Property EstimatedTimeOfArrival As TimeSpan?
@@ -38,6 +72,8 @@ Public MustInherit Class ProgressingTaskStepBase
         End Get
     End Property
 
+    Friend Property StepExecutionResult As ProgressingTaskStepDynamicFailAction
+
     Public Sub Run()
         Select Case Me.Status
             Case ProgressingTaskStepStatus.NotStarted
@@ -45,9 +81,25 @@ Public MustInherit Class ProgressingTaskStepBase
                 Me.Status = ProgressingTaskStepStatus.InProgress
                 _StartTime = DateTime.Now
                 Try
-                    Me.StepAction.Invoke(Me)
+                    If Me.StepAction IsNot Nothing Then
+                        Me.StepAction.Invoke(Me)
+                    ElseIf Me.StepActionWithFailAction IsNot Nothing Then
+                        Me.StepExecutionResult = Me.StepActionWithFailAction.Invoke(Me)
+                        If Me.StepExecutionResult Is Nothing Then Throw New NotImplementedException("Implementation incomplete at step " & Me.StepTitle & ": Step action method must return ProgressingTaskStepDynamicFailAction")
+                        Me.FailAction = StepExecutionResult.FailAction
+                        If Me.StepExecutionResult.CompletedSuccessful = False Then
+                            Throw New InternalStepExecutionException(Me.StepExecutionResult.Exception)
+                        End If
+                    Else
+                        Throw New InvalidOperationException("No step action defined")
+                    End If
                     _EndTime = DateTime.Now
                     Me.Status = ProgressingTaskStepStatus.Completed
+                Catch ex As InternalStepExecutionException
+                    Me.Status = ProgressingTaskStepStatus.Failed
+                    _EndTime = DateTime.Now
+                    Me.FoundException = ex
+                    Throw New StepException("Fehlgeschlagener Einzelschritt: " & StepTitle, ex.InnerException)
                 Catch ex As Exception
                     Me.Status = ProgressingTaskStepStatus.Failed
                     _EndTime = DateTime.Now
@@ -92,7 +144,11 @@ Public MustInherit Class ProgressingTaskStepBase
 
     Public Property Status As ProgressingTaskStepStatus = ProgressingTaskStepStatus.NotStarted
 
-    Public Enum ProgressingTaskStepFailAction
+    Public Enum ProgressingTaskStepFailAction As Integer
+        ''' <summary>
+        ''' The delegate method of type StepActionMethodWithFailAction also declares the fail action
+        ''' </summary>
+        DependingOnResultOfStepActionMethodWithFailAction = -1
         ''' <summary>
         ''' Log the exception, mark this step as failed (will lead to continue with next step in ProgressingTaskItem)
         ''' </summary>

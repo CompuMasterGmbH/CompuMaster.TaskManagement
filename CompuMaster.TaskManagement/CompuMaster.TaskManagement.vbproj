@@ -7,7 +7,7 @@
     <Authors>Jochen Wezel</Authors>
     <Product>CompuMaster.TaskManagement</Product>
     <Copyright>2023-2024 CompuMaster GmbH</Copyright>
-    <Version>2024.11.08.100</Version>
+    <Version>2024.11.12.100</Version>
     <Configurations>Debug;CI_CD;Release</Configurations>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <OptionExplicit>On</OptionExplicit>

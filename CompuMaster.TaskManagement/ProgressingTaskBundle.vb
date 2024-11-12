@@ -161,7 +161,7 @@ Public Class ProgressingTaskBundle
                     Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailingInCriticalState
                         'Task bundle failed and critical operations left the system in an undefined/critical state
                         Me.Status = ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedInCriticalState
-                        Throw New AggregateException("ERROR: Aufgabe " & TaskBundleTitle & " fehlgeschlagen - ACHTUnG: das System befindet sich aufgrund fehlender Korrektur-Möglichkeiten in einem undefinierten/kritischen Zustand")
+                        Throw New AggregateException("ERROR: Aufgabe " & TaskBundleTitle & " fehlgeschlagen - ACHTUNG: das System befindet sich aufgrund fehlender Korrektur-Möglichkeiten in einem undefinierten/kritischen Zustand")
                     Case ProgressingTaskBundle.ProgressingTaskBundleStatus.InProgress
                         'Task bundle completed successfully
                         Me.Status = ProgressingTaskBundle.ProgressingTaskBundleStatus.CompletedSuccessfully

@@ -103,6 +103,14 @@ Public Class ProgressingTaskItem
     End Sub
 
     ''' <summary>
+    ''' Adds a step which can't be rolled back to the SecondsStepsWithoutRollbackOption list
+    ''' </summary>
+    Public Sub AddStepWithoutRolledBackPossibility(stepTitle As String, stepAction As StepActionMethodWithFailAction, estimatedTimeToRun As TimeSpan?)
+        Dim taskStep As New ProgressingTaskStep(stepTitle, stepAction, estimatedTimeToRun)
+        SecondStepsWithoutRollbackOption.Add(taskStep)
+    End Sub
+
+    ''' <summary>
     ''' Adds a rollback step to the RollbackSteps list
     ''' </summary>
     ''' <param name="taskStep"></param>
@@ -285,12 +293,29 @@ Public Class ProgressingTaskItem
                                     End Try
                                 Case ProgressingTaskStep.ProgressingTaskStepFailAction.ThrowException
                                     Await Task.Run(Sub() CurrentStep.Run(), Threading.CancellationToken.None)
+                                Case ProgressingTaskStepFailAction.DependingOnResultOfStepActionMethodWithFailAction
+                                    Try
+                                        Await Task.Run(Sub() CurrentStep.Run(), Threading.CancellationToken.None)
+                                    Catch ex As Exception
+                                        Select Case CurrentStep.FailAction
+                                            Case ProgressingTaskStepFailAction.DependingOnResultOfStepActionMethodWithFailAction
+                                                'Step action failed and wasn't able to return final fail action before ending -> throw exception immediately
+                                                Throw New NotImplementedException("Implementation incomplete at step " & CurrentStep.StepTitle & ": Step action must catch exceptions and assign FailAction before re-throwing the exception", ex)
+                                            Case ProgressingTaskStepFailAction.ThrowException
+                                                Throw
+                                            Case ProgressingTaskStepFailAction.LogExceptionAndContinue
+                                                Me.Status = ProgressingTaskItem.ProgressingTaskStatus.FailingInCriticalState
+                                                LoggedExceptions.Add(ex)
+                                            Case Else
+                                                Throw New NotImplementedException
+                                        End Select
+                                    End Try
                                 Case Else
                                     Throw New NotImplementedException("Unknown fail action")
                             End Select
                         Next
                     Catch ex As NotImplementedException
-                        Me.Status = ProgressingTaskItem.ProgressingTaskStatus.FailingInCriticalState
+                        Me.Status = ProgressingTaskItem.ProgressingTaskStatus.FailedInCriticalState
                         Throw
                     Catch ex As Exception
                         Me.Status = ProgressingTaskItem.ProgressingTaskStatus.FailingInCriticalState
