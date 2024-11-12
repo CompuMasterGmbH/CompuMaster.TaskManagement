@@ -98,7 +98,7 @@ Public MustInherit Class ProgressingTaskStepBase
                 Catch ex As InternalStepExecutionException
                     Me.Status = ProgressingTaskStepStatus.Failed
                     _EndTime = DateTime.Now
-                    Me.FoundException = ex
+                    Me.FoundException = ex.InnerException
                     Throw New StepException("Fehlgeschlagener Einzelschritt: " & StepTitle, ex.InnerException)
                 Catch ex As Exception
                     Me.Status = ProgressingTaskStepStatus.Failed
