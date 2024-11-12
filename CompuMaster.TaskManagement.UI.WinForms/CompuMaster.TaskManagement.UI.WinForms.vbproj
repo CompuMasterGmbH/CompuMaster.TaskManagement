@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2024.11.12.101</Version>
+    <Version>2024.11.12.102</Version>
     <Copyright>2023-2024 CompuMaster GmbH</Copyright>
     <Title>CompuMaster.TaskManagement.UI.WinForms - MIT license edition</Title>
     <Company>CompuMaster GmbH</Company>

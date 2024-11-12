@@ -42,6 +42,8 @@ Public Class MainForm
     Private Sub TestVonLongRunTaskBundlesButton_Click(sender As Object, e As EventArgs) Handles TestVonLongRunTaskBundlesButton.Click
         TryRun(Sub()
                    Dim f As MultiTaskProgessForm
+
+                   'Run tasks which doesn't use result data
                    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollback)
                    f.Show()
                    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollbackFailingWithThrownException)
@@ -51,6 +53,21 @@ Public Class MainForm
                    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingInCriticalStepsWithoutRollbackPossibility)
                    f.Show()
                    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleSuccessful)
+                   f.Show()
+
+                   'Run tasks which provide result data and which shall be displayed at GUI
+                   Dim TaskBundleResult As DateTime
+                   Dim tb = DummyTaskBundles.DummyTaskBundleProvidingSomeResultData(Sub() TaskBundleResult = Now)
+                   f = New MultiTaskProgessForm(tb)
+                   f.AutoStartTaskBundleRunner = True
+                   f.AutoCloseFormOnTaskBundleCompleted = True
+                   f.AllowCancellation = False
+                   f.OnTaskBundleCompletedActions.Add(Sub()
+                                                          Dim f2 As New Form
+                                                          f2.Text = "Results of " & tb.TaskBundleTitle
+                                                          f2.Controls.Add(New Label() With {.Dock = DockStyle.Fill, .TextAlign = ContentAlignment.MiddleCenter, .Text = "Task bundle completed on " & TaskBundleResult.ToString})
+                                                          f2.Show()
+                                                      End Sub)
                    f.Show()
                End Sub, False, False)
     End Sub

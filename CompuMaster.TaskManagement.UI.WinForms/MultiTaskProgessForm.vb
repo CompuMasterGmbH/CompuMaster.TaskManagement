@@ -28,8 +28,11 @@ Public Class MultiTaskProgessForm
 
     Public Property AutoStartTaskBundleRunner As Boolean
 
+    Public Property AllowCancellation As Boolean = True
+
     Private Sub MultiTaskProgessForm_Load(sender As Object, e As EventArgs) Handles Me.Load
         RefreshAllControls()
+        If Me.AllowCancellation = False Then Me.ControlBox = False
         If AutoStartTaskBundleRunner Then
             Me.ButtonStart_Click(sender, e)
         End If
@@ -47,9 +50,9 @@ Public Class MultiTaskProgessForm
 
     Public Sub RefreshButtonStatus()
         Me.ButtonStart.Visible = Me.TaskBundle.Status = ProgressingTaskBundle.ProgressingTaskBundleStatus.NotStarted
-        Me.ButtonCancel.Visible = Me.TaskBundle.IsRunningOrFailing
+        Me.ButtonCancel.Visible = Me.AllowCancellation AndAlso Me.TaskBundle.IsRunningOrFailing
         Me.ButtonCancel.Enabled = Not Me.TaskBundle.CancellationTokenSource.Token.IsCancellationRequested
-        Me.ButtonClose.Visible = Not (Me.ButtonStart.Visible OrElse Me.ButtonCancel.Visible)
+        Me.ButtonClose.Visible = Not (Me.ButtonStart.Visible OrElse Me.TaskBundle.IsRunningOrFailing)
     End Sub
 
     Public Sub RefreshVisibilityAndStatusOfProgressbars()
