@@ -1,4 +1,7 @@
-﻿Public Class ProgressingTaskStepDynamicFailAction
+﻿''' <summary>
+''' The result of a step action method
+''' </summary>
+Public Class TaskStepActionResult
 
     Public Sub New()
         Me.CompletedSuccessful = True

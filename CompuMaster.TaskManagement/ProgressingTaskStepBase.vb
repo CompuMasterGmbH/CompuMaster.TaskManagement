@@ -43,7 +43,7 @@ Public MustInherit Class ProgressingTaskStepBase
     ''' <param name="taskstep"></param>
     ''' <returns></returns>
 
-    Public Delegate Function StepActionMethodWithFailAction(taskstep As ProgressingTaskStepBase) As ProgressingTaskStepDynamicFailAction
+    Public Delegate Function StepActionMethodWithFailAction(taskstep As ProgressingTaskStepBase) As TaskStepActionResult
 
     Public Property ParentTask As ProgressingTaskItem
     Public Property StepTitle As String
@@ -72,7 +72,7 @@ Public MustInherit Class ProgressingTaskStepBase
         End Get
     End Property
 
-    Friend Property StepExecutionResult As ProgressingTaskStepDynamicFailAction
+    Friend Property StepExecutionResult As TaskStepActionResult
 
     Public Sub Run()
         Select Case Me.Status
