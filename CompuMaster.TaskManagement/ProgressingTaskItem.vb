@@ -478,6 +478,10 @@ Public Class ProgressingTaskItem
             If CurrentStep.EstimatedTimeToRun.HasValue Then Result.AppendLine("* Estimated time: " & CurrentStep.EstimatedTimeToRun.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture))
             If CurrentStep.ConsumedTime.HasValue Then Result.AppendLine("* Consumed time: " & CurrentStep.ConsumedTime.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture))
             If Not CurrentStep.EstimatedTimeToRun.HasValue AndAlso Not CurrentStep.ConsumedTime.HasValue Then Result.AppendLine("* No time information available")
+            Select Case CurrentStep.Status
+                Case ProgressingTaskStepStatus.Failed
+                    Result.AppendLine("* Step failed: " & Tools.IndentStringStartingWith2ndLine(CurrentStep.FoundException.Message, 2, System.Environment.NewLine))
+            End Select
         Next
         Return Result.ToString
     End Function
@@ -605,8 +609,11 @@ Public Class ProgressingTaskItem
         Dim Result As New System.Text.StringBuilder
         Result.Append(Me.LoggedExceptionsToPlainText(fullLength)) 'either empty or contains exceptions with line-break after last exception
         If Result.Length <> 0 Then Result.AppendLine()
-        Result.Append(CollectedWarningsText) 'either empty or contains warnings with line-break at end of last warning 
-        If Result.Length <> 0 Then Result.AppendLine()
+        Dim Warnings = CollectedWarningsText()
+        If Warnings <> Nothing Then
+            Result.Append(CollectedWarningsText) 'either empty or contains warnings with line-break at end of last warning 
+            If Result.Length <> 0 Then Result.AppendLine()
+        End If
         Result.Append(Me.ConsumedTimeStatisticsInfo(fullLength)) 'always contains some lines and line-break at last line
         Return Result.ToString
     End Function

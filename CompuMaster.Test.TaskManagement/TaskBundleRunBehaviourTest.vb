@@ -94,7 +94,7 @@ Namespace CompuMaster.Test.TaskManagement
             Dim TaskBundle As ProgressingTaskBundle
             TaskBundle = DummyTaskBundlesExtended.DummyTaskBundleFailingStepActionWithFailAction(Function()
                                                                                                      'Catched exception failure - LogAndContinue
-                                                                                                     Return New ProgressingTaskStepDynamicFailAction(New CustomException("Failure-Test in Dummy"), ProgressingTaskStepBase.ProgressingTaskStepFailAction.LogExceptionAndContinue)
+                                                                                                     Return New ProgressingTaskStepDynamicFailAction(New CustomException("Failure-Test in Dummy" & System.Environment.NewLine & "with a 2nd line in exception message"), ProgressingTaskStepBase.ProgressingTaskStepFailAction.LogExceptionAndContinue)
                                                                                                  End Function)
             Assert.Catch(Of AggregateException)(Sub() TaskBundle.RunAllTasks())
             System.Console.WriteLine(TaskBundle.DisplaySummary)
@@ -111,7 +111,7 @@ Namespace CompuMaster.Test.TaskManagement
             Dim TaskBundle As ProgressingTaskBundle
             TaskBundle = DummyTaskBundlesExtended.DummyTaskBundleFailingStepActionWithFailAction(Function()
                                                                                                      'Catched exception failure - Throw
-                                                                                                     Return New ProgressingTaskStepDynamicFailAction(New CustomException("Failure-Test in Dummy"), ProgressingTaskStepBase.ProgressingTaskStepFailAction.ThrowException)
+                                                                                                     Return New ProgressingTaskStepDynamicFailAction(New CustomException("Failure-Test in Dummy" & System.Environment.NewLine & "with a 2nd line in exception message"), ProgressingTaskStepBase.ProgressingTaskStepFailAction.ThrowException)
                                                                                                  End Function)
             Assert.Catch(Of AggregateException)(Sub() TaskBundle.RunAllTasks())
             System.Console.WriteLine(TaskBundle.DisplaySummary)
