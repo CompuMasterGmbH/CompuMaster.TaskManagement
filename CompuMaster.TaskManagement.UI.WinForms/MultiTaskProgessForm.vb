@@ -26,8 +26,13 @@ Public Class MultiTaskProgessForm
 
     Public Property TaskBundle As ProgressingTaskBundle
 
+    Public Property AutoStartTaskBundleRunner As Boolean
+
     Private Sub MultiTaskProgessForm_Load(sender As Object, e As EventArgs) Handles Me.Load
         RefreshAllControls()
+        If AutoStartTaskBundleRunner Then
+            Me.ButtonStart_Click(sender, e)
+        End If
     End Sub
 
     Public Sub RefreshAllControls()
@@ -197,9 +202,32 @@ Public Class MultiTaskProgessForm
                        )
     End Sub
 
+    Public Delegate Sub OnTaskBundleCompletedActionMethod(status As ProgressingTaskBundle.ProgressingTaskBundleStatus)
+
+    ''' <summary>
+    ''' Actions to call on task bundle completed
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property OnTaskBundleCompletedActions As New List(Of OnTaskBundleCompletedActionMethod)
+
     Protected Overridable Sub OnTaskBundleCompleted(status As ProgressingTaskBundle.ProgressingTaskBundleStatus)
+        For Each ActionItem In OnTaskBundleCompletedActions
+            ActionItem(status)
+        Next
         RaiseEvent TaskBundleCompleted(status)
     End Sub
+
+    ''' <summary>
+    ''' Automatically show message box with task bundle status after task bundle completed
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property ShowMessageBoxOnTaskBundleCompleted As Boolean = True
+
+    ''' <summary>
+    ''' Automatically close form after task bundle completed
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property AutoCloseFormOnTaskBundleCompleted As Boolean = False
 
     Private Sub MyForm_TaskBundleCompleted(status As ProgressingTaskBundle.ProgressingTaskBundleStatus) Handles Me.TaskBundleCompleted
         UITools.TryRun(Me,
@@ -212,22 +240,26 @@ Public Class MultiTaskProgessForm
                        Sub(switch)
                        End Sub
                        )
-        Select Case status
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.CompletedSuccessfully
-                MessageBox.Show(Me, "Der Task wurde erfolgreich abgeschlossen.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedNonCritically
-                Me.ButtonCopyResultsToClipboard.Visible = True
-                MessageBox.Show(Me, "Der Task wurde mit Fehlern abgeschlossen.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedInCriticalState
-                Me.ButtonCopyResultsToClipboard.Visible = True
-                MessageBox.Show(Me, "Der Task wurde mit Fehlern abgeschlossen. ACHTUNG: Aufgrund von nicht korrigierbaren Fehlern verbleibt das System in einem undefinierten, kritischen Zustand.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.Aborted
-                Me.ButtonCopyResultsToClipboard.Visible = True
-                MessageBox.Show(Me, "Der Task wurde abgebrochen.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-            Case Else
-                MessageBox.Show(Me, "Der Task wurde abgeschlossen: " & status.ToString, Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        End Select
         TimerRefreshAllControls.Enabled = False
+        If AutoCloseFormOnTaskBundleCompleted Then
+            Me.Close()
+        ElseIf ShowMessageBoxOnTaskBundleCompleted Then
+            Select Case status
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.CompletedSuccessfully
+                    MessageBox.Show(Me, "Der Task wurde erfolgreich abgeschlossen.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedNonCritically
+                    Me.ButtonCopyResultsToClipboard.Visible = True
+                    MessageBox.Show(Me, "Der Task wurde mit Fehlern abgeschlossen.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedInCriticalState
+                    Me.ButtonCopyResultsToClipboard.Visible = True
+                    MessageBox.Show(Me, "Der Task wurde mit Fehlern abgeschlossen. ACHTUNG: Aufgrund von nicht korrigierbaren Fehlern verbleibt das System in einem undefinierten, kritischen Zustand.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.Aborted
+                    Me.ButtonCopyResultsToClipboard.Visible = True
+                    MessageBox.Show(Me, "Der Task wurde abgebrochen.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                Case Else
+                    MessageBox.Show(Me, "Der Task wurde abgeschlossen: " & status.ToString, Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            End Select
+        End If
     End Sub
 
     Private Sub ButtonCancel_Click(sender As Object, e As EventArgs) Handles ButtonCancel.Click

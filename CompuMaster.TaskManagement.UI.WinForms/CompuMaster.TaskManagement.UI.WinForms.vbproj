@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2024.11.12.100</Version>
+    <Version>2024.11.12.101</Version>
+    <Copyright>2023-2024 CompuMaster GmbH</Copyright>
     <Title>CompuMaster.TaskManagement.UI.WinForms - MIT license edition</Title>
     <Company>CompuMaster GmbH</Company>
     <Authors>Jochen Wezel</Authors>
     <Product>CompuMaster.TaskManagement</Product>
-    <Copyright>2023-2024 CompuMaster GmbH</Copyright>
     <Configurations>Debug;CI_CD;Release</Configurations>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <RootNamespace>CompuMaster.TaskManagement.UI.WinForms</RootNamespace>
