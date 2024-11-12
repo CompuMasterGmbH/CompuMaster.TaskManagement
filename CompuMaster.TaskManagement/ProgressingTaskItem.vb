@@ -375,7 +375,7 @@ Public Class ProgressingTaskItem
     End Sub
 
     ''' <summary>
-    ''' Geschätzte Laufzeit
+    ''' Estimated time to run all steps
     ''' </summary>
     ''' <returns></returns>
     Public Function EstimatedTimeToRun() As TimeSpan?
@@ -400,7 +400,7 @@ Public Class ProgressingTaskItem
     End Function
 
     ''' <summary>
-    ''' Geschätzte verbliebene Laufzeit
+    ''' Estimated remaining time to run
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property EstimatedTimeOfArrival() As TimeSpan?
@@ -433,7 +433,7 @@ Public Class ProgressingTaskItem
     Private _EndTime As DateTime?
 
     ''' <summary>
-    ''' Verbrauchte Laufzeit
+    ''' Consumed time since start
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property ConsumedTime As TimeSpan?
@@ -481,6 +481,16 @@ Public Class ProgressingTaskItem
         Next
         Return Result.ToString
     End Function
+
+    ''' <summary>
+    ''' Textdarstellung des Task-Items aus Titel und Status
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property DisplayTitleAndStatus As String
+        Get
+            Return Me.TaskTitle & " [" & Me.Status.ToString() & "]"
+        End Get
+    End Property
 
     ''' <summary>
     ''' Textdarstellung des Task-Items aus Titel und Status

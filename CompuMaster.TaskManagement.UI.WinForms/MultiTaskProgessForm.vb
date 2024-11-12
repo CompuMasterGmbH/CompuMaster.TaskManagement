@@ -37,46 +37,7 @@ Public Class MultiTaskProgessForm
     End Sub
 
     Private Sub RefreshFormTitle()
-        Dim NewFormTitle As String
-
-        'Add task title + status to the form title
-        Select Case Me.TaskBundle.Status
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.NotStarted
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Noch nicht gestartet"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.InProgress
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - In Bearbeitung"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailingNonCritically
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Fehlgeschlagen - Wird beendet"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailingInCriticalState
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Fehlgeschlagen - Wird beendet - Kritischer System-Zustand wird verbleiben"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.Aborting
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Wird abgebrochen"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.CompletedSuccessfully
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Erfolgreich abgeschlossen"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedNonCritically
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Fehlgeschlagen"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedInCriticalState
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Fehlgeschlagen - Kritischer System-Zustand verblieben"
-            Case ProgressingTaskBundle.ProgressingTaskBundleStatus.Aborted
-                NewFormTitle = Me.TaskBundle.TaskBundleTitle & " - Abgebrochen"
-            Case Else
-                Throw New NotSupportedException("Unknown status")
-        End Select
-
-        'Add ETA or ETR to the form title
-        With Nothing
-            Dim ETA = Me.TaskBundle.EstimatedTimeOfArrival
-            If ETA.HasValue Then
-                NewFormTitle &= " - ETA: " & ETA.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture)
-            Else
-                Dim ETR = Me.TaskBundle.EstimatedTimeToRun
-                If ETR.HasValue Then
-                    NewFormTitle &= " - ETA: " & ETR.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture)
-                End If
-            End If
-        End With
-
-        Me.Text = NewFormTitle
+        Me.Text = Me.TaskBundle.DisplayTitleAndStatusAndETA
     End Sub
 
     Public Sub RefreshButtonStatus()

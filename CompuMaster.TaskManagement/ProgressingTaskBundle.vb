@@ -228,6 +228,10 @@ Public Class ProgressingTaskBundle
         End Get
     End Property
 
+    ''' <summary>
+    ''' Estimated time to run all steps
+    ''' </summary>
+    ''' <returns></returns>
     Public ReadOnly Property EstimatedTimeToRun As TimeSpan?
         Get
             Dim Result As New TimeSpan?
@@ -242,6 +246,10 @@ Public Class ProgressingTaskBundle
         End Get
     End Property
 
+    ''' <summary>
+    ''' Estimated remaining time to run
+    ''' </summary>
+    ''' <returns></returns>
     Public ReadOnly Property EstimatedTimeOfArrival As TimeSpan?
         Get
             Dim Result As New TimeSpan?
@@ -255,5 +263,72 @@ Public Class ProgressingTaskBundle
             Return Result
         End Get
     End Property
+
+    ''' <summary>
+    ''' The task bundle title, its status and (if availabe) the ETA (estimated time of arrival)
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property DisplayTitleAndStatusAndETA As String
+        Get
+            Dim Result As String
+
+            'Add task title + status to the form title
+            Select Case Me.Status
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.NotStarted
+                    Result = Me.TaskBundleTitle & " - Noch nicht gestartet"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.InProgress
+                    Result = Me.TaskBundleTitle & " - In Bearbeitung"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailingNonCritically
+                    Result = Me.TaskBundleTitle & " - Fehlgeschlagen - Wird beendet"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailingInCriticalState
+                    Result = Me.TaskBundleTitle & " - Fehlgeschlagen - Wird beendet - Kritischer System-Zustand wird verbleiben"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.Aborting
+                    Result = Me.TaskBundleTitle & " - Wird abgebrochen"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.CompletedSuccessfully
+                    Result = Me.TaskBundleTitle & " - Erfolgreich abgeschlossen"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedNonCritically
+                    Result = Me.TaskBundleTitle & " - Fehlgeschlagen"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.FailedInCriticalState
+                    Result = Me.TaskBundleTitle & " - Fehlgeschlagen - Kritischer System-Zustand verblieben"
+                Case ProgressingTaskBundle.ProgressingTaskBundleStatus.Aborted
+                    Result = Me.TaskBundleTitle & " - Abgebrochen"
+                Case Else
+                    Throw New NotSupportedException("Unknown status")
+            End Select
+
+            'Add ETA or ETR to the form title
+            With Nothing
+                Dim ETA = Me.EstimatedTimeOfArrival
+                If ETA.HasValue Then
+                    Result &= " - ETA: " & ETA.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture)
+                Else
+                    Dim ETR = Me.EstimatedTimeToRun
+                    If ETR.HasValue Then
+                        Result &= " - ETA: " & ETR.Value.ToString("d\.hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture)
+                    End If
+                End If
+            End With
+
+            Return Result
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' A summary text for display
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function DisplaySummary() As String
+        Dim Result As New System.Text.StringBuilder
+        For Each TaskItem In Me.Tasks
+            If Result.Length <> 0 Then
+                Result.AppendLine()
+                Result.AppendLine()
+            End If
+            Result.AppendLine("## " & TaskItem.TaskTitle)
+            Result.AppendLine()
+            Result.Append(TaskItem.SummaryText)
+        Next
+        Return Result.ToString
+    End Function
 
 End Class
