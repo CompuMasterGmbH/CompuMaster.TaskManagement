@@ -44,6 +44,8 @@ Public Class MainForm
                    Dim f As MultiTaskProgessForm
 
                    'Run tasks which doesn't use result data
+                   f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleWith1TaskButWithoutAnySteps)
+                   f.Show()
                    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollback)
                    f.Show()
                    f = New MultiTaskProgessForm(DummyTaskBundles.DummyTaskBundleFailingWithRollbackFailingWithThrownException)

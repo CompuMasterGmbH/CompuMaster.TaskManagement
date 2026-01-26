@@ -6,6 +6,16 @@ Public NotInheritable Class DummyTaskBundles
     ''' Dummy Task Bundle with exception in first steps and rollback
     ''' </summary>
     ''' <returns></returns>
+    Public Shared Function DummyTaskBundleWith1TaskButWithoutAnySteps() As ProgressingTaskBundle
+        Dim Result As New ProgressingTaskBundle("Dummy Task Bundle with 1 task and no steps")
+        Dim Task1 As ProgressingTaskItem = Result.CreateAndAddNewTask("Dummy Task 1")
+        Return Result
+    End Function
+
+    ''' <summary>
+    ''' Dummy Task Bundle with exception in first steps and rollback
+    ''' </summary>
+    ''' <returns></returns>
     Public Shared Function DummyTaskBundleFailingWithRollback() As ProgressingTaskBundle
         Dim Result As New ProgressingTaskBundle("Dummy Task Bundle with exception and rollback")
         Dim Task1 As ProgressingTaskItem = Result.CreateAndAddNewTask("Dummy Task 1")

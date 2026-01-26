@@ -202,7 +202,7 @@ Public Class ProgressingTaskItem
     ''' <returns></returns>
     Public ReadOnly Property RunningStep As ProgressingTaskStepBase
         Get
-            If RunningTotalStepIndex.HasValue Then
+            If RunningTotalStepIndex.HasValue AndAlso RunningTotalStepIndex >= 0 Then
                 Return TotalStepItem(RunningTotalStepIndex.Value)
             Else
                 Return Nothing
@@ -405,7 +405,7 @@ Public Class ProgressingTaskItem
     ''' <returns></returns>
     Public ReadOnly Property EstimatedTimeOfArrival() As TimeSpan?
         Get
-            If Me.RunningTotalStepIndex.HasValue = False Then
+            If Me.RunningTotalStepIndex.HasValue = False OrElse Me.RunningTotalStepIndex < 0 OrElse Me.TotalStepsCount = 0 Then
                 'Task has not started yet -> return estimated time to run
                 If Me.Status = ProgressingTaskStep.ProgressingTaskStepStatus.NotStarted Then
                     Return Me.EstimatedTimeToRun
