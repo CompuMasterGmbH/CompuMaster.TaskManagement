@@ -89,8 +89,7 @@ Public Class ProgressingTaskBundle
     End Function
 
     Public Sub RunAllTasks()
-        Dim runAllTask As Task = RunAllTasksAsync(CancellationTokenSource.Token)
-        runAllTask.Wait()
+        RunAllTasksAsync(CancellationTokenSource.Token).GetAwaiter().GetResult()
     End Sub
 
     Private Async Function RunAllTasksAsync(cancellationToken As Threading.CancellationToken) As Task
