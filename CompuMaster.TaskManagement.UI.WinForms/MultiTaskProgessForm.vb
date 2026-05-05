@@ -3,8 +3,14 @@ Option Explicit On
 
 Imports System.ComponentModel
 
+''' <summary>
+''' Provides a Windows Forms dialog that runs and displays a task bundle.
+''' </summary>
 Public Class MultiTaskProgessForm
 
+    ''' <summary>
+    ''' Initializes a new task progress form.
+    ''' </summary>
     <System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)>
     <Obsolete("Use overloaded constructor", True)>
     Public Sub New()
@@ -16,6 +22,10 @@ Public Class MultiTaskProgessForm
         End If
     End Sub
 
+    ''' <summary>
+    ''' Initializes a new task progress form for a task bundle.
+    ''' </summary>
+    ''' <param name="taskBundle">The task bundle to run and display.</param>
     Public Sub New(taskBundle As ProgressingTaskBundle)
         If taskBundle Is Nothing OrElse taskBundle.Tasks.Count = 0 Then
             Throw New ArgumentNullException(NameOf(taskBundle), "No tasks to run")
@@ -24,10 +34,19 @@ Public Class MultiTaskProgessForm
         Me.TaskBundle = taskBundle
     End Sub
 
+    ''' <summary>
+    ''' Gets or sets the task bundle to run and display.
+    ''' </summary>
     Public Property TaskBundle As ProgressingTaskBundle
 
+    ''' <summary>
+    ''' Gets or sets a value indicating whether the task bundle starts when the form loads.
+    ''' </summary>
     Public Property AutoStartTaskBundleRunner As Boolean
 
+    ''' <summary>
+    ''' Gets or sets a value indicating whether cancellation is allowed.
+    ''' </summary>
     Public Property AllowCancellation As Boolean = True
 
     Private Sub MultiTaskProgessForm_Load(sender As Object, e As EventArgs) Handles Me.Load
@@ -38,6 +57,9 @@ Public Class MultiTaskProgessForm
         End If
     End Sub
 
+    ''' <summary>
+    ''' Refreshes all form controls.
+    ''' </summary>
     Public Sub RefreshAllControls()
         RefreshVisibilityAndStatusOfProgressbars()
         RefreshButtonStatus()
@@ -48,6 +70,9 @@ Public Class MultiTaskProgessForm
         Me.Text = Me.TaskBundle.DisplayTitleAndStatusAndETA
     End Sub
 
+    ''' <summary>
+    ''' Refreshes the status of the form buttons.
+    ''' </summary>
     Public Sub RefreshButtonStatus()
         Me.ButtonStart.Visible = Me.TaskBundle.Status = ProgressingTaskBundle.ProgressingTaskBundleStatus.NotStarted
         Me.ButtonCancel.Visible = Me.AllowCancellation AndAlso Me.TaskBundle.IsRunningOrFailing
@@ -55,6 +80,9 @@ Public Class MultiTaskProgessForm
         Me.ButtonClose.Visible = Not (Me.ButtonStart.Visible OrElse Me.TaskBundle.IsRunningOrFailing)
     End Sub
 
+    ''' <summary>
+    ''' Refreshes the visibility and status of all progress bars.
+    ''' </summary>
     Public Sub RefreshVisibilityAndStatusOfProgressbars()
         For MyCounter As Integer = 0 To System.Math.Max(Me.FlowLayoutPanelForProgressingTasks.Controls.Count, Me.TaskBundle.Tasks.Count) - 1
             If MyCounter >= Me.FlowLayoutPanelForProgressingTasks.Controls.Count Then
@@ -182,6 +210,10 @@ Public Class MultiTaskProgessForm
 
     Private _AsyncRunnerTask As Task
 
+    ''' <summary>
+    ''' Occurs when the task bundle completed.
+    ''' </summary>
+    ''' <param name="status">The final task bundle status.</param>
     Public Event TaskBundleCompleted(status As ProgressingTaskBundle.ProgressingTaskBundleStatus)
 
 
@@ -205,14 +237,22 @@ Public Class MultiTaskProgessForm
                        )
     End Sub
 
+    ''' <summary>
+    ''' Represents an action that runs when the task bundle completed.
+    ''' </summary>
+    ''' <param name="status">The final task bundle status.</param>
     Public Delegate Sub OnTaskBundleCompletedActionMethod(status As ProgressingTaskBundle.ProgressingTaskBundleStatus)
 
     ''' <summary>
-    ''' Actions to call on task bundle completed
+    ''' Gets or sets the actions to call when the task bundle completed.
     ''' </summary>
     ''' <returns></returns>
     Public Property OnTaskBundleCompletedActions As New List(Of OnTaskBundleCompletedActionMethod)
 
+    ''' <summary>
+    ''' Raises the <see cref="TaskBundleCompleted"/> event.
+    ''' </summary>
+    ''' <param name="status">The final task bundle status.</param>
     Protected Overridable Sub OnTaskBundleCompleted(status As ProgressingTaskBundle.ProgressingTaskBundleStatus)
         For Each ActionItem In OnTaskBundleCompletedActions
             ActionItem(status)
@@ -221,13 +261,13 @@ Public Class MultiTaskProgessForm
     End Sub
 
     ''' <summary>
-    ''' Automatically show message box with task bundle status after task bundle completed
+    ''' Gets or sets a value indicating whether a message box is shown when the task bundle completed.
     ''' </summary>
     ''' <returns></returns>
     Public Property ShowMessageBoxOnTaskBundleCompleted As Boolean = True
 
     ''' <summary>
-    ''' Automatically close form after task bundle completed
+    ''' Gets or sets a value indicating whether the form closes when the task bundle completed.
     ''' </summary>
     ''' <returns></returns>
     Public Property AutoCloseFormOnTaskBundleCompleted As Boolean = False

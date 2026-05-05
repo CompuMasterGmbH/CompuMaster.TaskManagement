@@ -5,6 +5,9 @@ Imports System.Threading
 Imports CompuMaster.TaskManagement.ProgressingTaskStepBase
 Imports CompuMaster.TaskManagement.Exceptions
 
+''' <summary>
+''' Represents a progressing task in a task bundle.
+''' </summary>
 Public Class ProgressingTaskItem
 
     ''' <summary>
@@ -31,116 +34,178 @@ Public Class ProgressingTaskItem
         parentTaskBundle.AddTask(Me)
     End Sub
 
+    ''' <summary>
+    ''' Gets or sets the parent task bundle.
+    ''' </summary>
     Public Property ParentTaskBundle As ProgressingTaskBundle
 
+    ''' <summary>
+    ''' Gets or sets the display title of the task.
+    ''' </summary>
     Public Property TaskTitle As String
 
     ''' <summary>
-    ''' Verhalten, wenn vorherige Tasks fehlschlugen oder ein Abbruch angefordert wurde
+    ''' Gets or sets the run behavior when previous tasks failed or were cancelled.
     ''' </summary>
     ''' <returns></returns>
     Public Property RunBehaviourIfPreviousTasksFailed As ProgressingTaskItem.RunBehaviourIfPreviousTasksFailedEnum = ProgressingTaskItem.RunBehaviourIfPreviousTasksFailedEnum.SkipIfPreviousTasksFailedOrCancelled
 
+    ''' <summary>
+    ''' Defines whether a task runs when previous tasks failed or were cancelled.
+    ''' </summary>
     Public Enum RunBehaviourIfPreviousTasksFailedEnum
         ''' <summary>
-        ''' Must always run (for e.g. rollback tasks), even if previous tasks failed or were cancelled
+        ''' The task always runs, even if previous tasks failed or were cancelled.
         ''' </summary>
         RunAlways = 0
         ''' <summary>
-        ''' Run only if previous tasks completed successfully and no cancellation was requested, otherweise skip
+        ''' The task runs only if previous tasks completed successfully and no cancellation was requested.
         ''' </summary>
         SkipIfPreviousTasksFailedOrCancelled = 1
     End Enum
 
     ''' <summary>
-    ''' Steps which allow rollback
+    ''' Gets the steps that allow rollback.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property FirstStepsWhichCanBeRolledBack As New List(Of ProgressingTaskFailFastStep)
 
     ''' <summary>
-    ''' (Critical) steps which can't be rolled back
+    ''' Gets the critical steps that cannot be rolled back.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property SecondStepsWithoutRollbackOption As New List(Of ProgressingTaskStep)
 
     ''' <summary>
-    ''' Rollback actions
+    ''' Gets the rollback steps.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property RollbackSteps As New List(Of ProgressingTaskStep)
 
     ''' <summary>
-    ''' Adds a step which can be rolled back to the FirstStepsWhichCanBeRolledBack list
+    ''' Adds a step that can be rolled back.
     ''' </summary>
-    ''' <param name="taskStep"></param>
+    ''' <param name="taskStep">The step to add.</param>
     Public Sub AddStepWhichCanBeRolledBack(taskStep As ProgressingTaskFailFastStep)
         FirstStepsWhichCanBeRolledBack.Add(taskStep)
     End Sub
 
     ''' <summary>
-    ''' Adds a step which can be rolled back to the FirstStepsWhichCanBeRolledBack list
+    ''' Adds a step that can be rolled back.
     ''' </summary>
+    ''' <param name="stepTitle">The display title of the step.</param>
+    ''' <param name="stepAction">The action to execute for the step.</param>
+    ''' <param name="estimatedTimeToRun">The estimated duration of the step, or <see langword="Nothing"/> if the duration is unknown.</param>
     Public Sub AddStepWhichCanBeRolledBack(stepTitle As String, stepAction As StepActionMethod, estimatedTimeToRun As TimeSpan?)
         Dim taskStep As New ProgressingTaskFailFastStep(stepTitle, stepAction, estimatedTimeToRun)
         FirstStepsWhichCanBeRolledBack.Add(taskStep)
     End Sub
 
     ''' <summary>
-    ''' Adds a step which can't be rolled back to the SecondsStepsWithoutRollbackOption list
+    ''' Adds a step that cannot be rolled back.
     ''' </summary>
-    ''' <param name="taskStep"></param>
+    ''' <param name="taskStep">The step to add.</param>
     Public Sub AddStepWithoutRolledBackPossibility(taskStep As ProgressingTaskStep)
         SecondStepsWithoutRollbackOption.Add(taskStep)
     End Sub
 
     ''' <summary>
-    ''' Adds a step which can't be rolled back to the SecondsStepsWithoutRollbackOption list
+    ''' Adds a step that cannot be rolled back.
     ''' </summary>
+    ''' <param name="stepTitle">The display title of the step.</param>
+    ''' <param name="stepAction">The action to execute for the step.</param>
+    ''' <param name="estimatedTimeToRun">The estimated duration of the step, or <see langword="Nothing"/> if the duration is unknown.</param>
+    ''' <param name="failAction">The action to apply when the step fails.</param>
     Public Sub AddStepWithoutRolledBackPossibility(stepTitle As String, stepAction As StepActionMethod, estimatedTimeToRun As TimeSpan?, failAction As ProgressingTaskStepFailAction)
         Dim taskStep As New ProgressingTaskStep(stepTitle, stepAction, estimatedTimeToRun, failAction)
         SecondStepsWithoutRollbackOption.Add(taskStep)
     End Sub
 
     ''' <summary>
-    ''' Adds a step which can't be rolled back to the SecondsStepsWithoutRollbackOption list
+    ''' Adds a step that cannot be rolled back.
     ''' </summary>
+    ''' <param name="stepTitle">The display title of the step.</param>
+    ''' <param name="stepAction">The action to execute for the step and return the step result.</param>
+    ''' <param name="estimatedTimeToRun">The estimated duration of the step, or <see langword="Nothing"/> if the duration is unknown.</param>
     Public Sub AddStepWithoutRolledBackPossibility(stepTitle As String, stepAction As StepActionMethodWithFailAction, estimatedTimeToRun As TimeSpan?)
         Dim taskStep As New ProgressingTaskStep(stepTitle, stepAction, estimatedTimeToRun)
         SecondStepsWithoutRollbackOption.Add(taskStep)
     End Sub
 
     ''' <summary>
-    ''' Adds a rollback step to the RollbackSteps list
+    ''' Adds a rollback step.
     ''' </summary>
-    ''' <param name="taskStep"></param>
+    ''' <param name="taskStep">The rollback step to add.</param>
     Public Sub AddRollbackStep(taskStep As ProgressingTaskStep)
         RollbackSteps.Add(taskStep)
     End Sub
 
     ''' <summary>
-    ''' Adds a rollback step to the RollbackSteps list
+    ''' Adds a rollback step.
     ''' </summary>
+    ''' <param name="stepTitle">The display title of the rollback step.</param>
+    ''' <param name="stepAction">The action to execute for the rollback step.</param>
+    ''' <param name="estimatedTimeToRun">The estimated duration of the rollback step, or <see langword="Nothing"/> if the duration is unknown.</param>
+    ''' <param name="failAction">The action to apply when the rollback step fails.</param>
     Public Sub AddRollbackStep(stepTitle As String, stepAction As StepActionMethod, estimatedTimeToRun As TimeSpan?, failAction As ProgressingTaskStepFailAction)
         Dim taskStep As New ProgressingTaskStep(stepTitle, stepAction, estimatedTimeToRun, failAction)
         RollbackSteps.Add(taskStep)
     End Sub
 
+    ''' <summary>
+    ''' Defines the execution status of a task.
+    ''' </summary>
     Public Enum ProgressingTaskStatus As Byte
+        ''' <summary>
+        ''' The task has not started.
+        ''' </summary>
         NotStarted = 0
+        ''' <summary>
+        ''' The task is running.
+        ''' </summary>
         InProgress = 1
+        ''' <summary>
+        ''' The task completed successfully.
+        ''' </summary>
         Completed = 2
+        ''' <summary>
+        ''' The task failed and rollback is possible.
+        ''' </summary>
         FailedWithRollbackOption = 31
+        ''' <summary>
+        ''' The task was skipped.
+        ''' </summary>
         Skipped = 4
+        ''' <summary>
+        ''' The task was aborted.
+        ''' </summary>
         Aborted = 5
+        ''' <summary>
+        ''' The task is aborting.
+        ''' </summary>
         Aborting = 6
+        ''' <summary>
+        ''' The task failed in a critical state.
+        ''' </summary>
         FailedInCriticalState = 30
+        ''' <summary>
+        ''' The task is failing in a critical state.
+        ''' </summary>
         FailingInCriticalState = 40
+        ''' <summary>
+        ''' The task is failing and rollback is possible.
+        ''' </summary>
         FailingWithRollbackOption = 41
     End Enum
 
+    ''' <summary>
+    ''' Gets or sets the execution status of the task.
+    ''' </summary>
     Public Property Status As ProgressingTaskItem.ProgressingTaskStatus = ProgressingTaskItem.ProgressingTaskStatus.NotStarted
 
+    ''' <summary>
+    ''' Marks the task as skipped.
+    ''' </summary>
     Public Sub MarkAsSkipped()
         If Me.Status = ProgressingTaskItem.ProgressingTaskStatus.NotStarted Then
             Me.Status = ProgressingTaskItem.ProgressingTaskStatus.Skipped
@@ -149,6 +214,9 @@ Public Class ProgressingTaskItem
         End If
     End Sub
 
+    ''' <summary>
+    ''' Gets the total number of non-rollback steps.
+    ''' </summary>
     Public ReadOnly Property TotalStepsCount As Integer
         Get
             Return FirstStepsWhichCanBeRolledBack.Count + SecondStepsWithoutRollbackOption.Count
@@ -157,7 +225,7 @@ Public Class ProgressingTaskItem
 
     Private _RunningStepNumber As Integer?
     ''' <summary>
-    ''' Nummer des aktuell laufenden Schritts (1-basiert)
+    ''' Gets the one-based number of the currently running step.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property RunningTotalStepNumber As Integer?
@@ -167,7 +235,7 @@ Public Class ProgressingTaskItem
     End Property
 
     ''' <summary>
-    ''' Index des aktuell laufenden Schritts (0-basiert)
+    ''' Gets the zero-based index of the currently running step.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property RunningTotalStepIndex As Integer?
@@ -181,10 +249,10 @@ Public Class ProgressingTaskItem
     End Property
 
     ''' <summary>
-    ''' Der hinterlegte Schritt
+    ''' Gets a step by its zero-based index.
     ''' </summary>
-    ''' <param name="totalStepIndex"></param>
-    ''' <returns></returns>
+    ''' <param name="totalStepIndex">The zero-based step index.</param>
+    ''' <returns>The step at the specified index.</returns>
     Public Function TotalStepItem(totalStepIndex As Integer) As ProgressingTaskStepBase
         If totalStepIndex < 0 OrElse totalStepIndex >= TotalStepsCount Then
             Throw New ArgumentOutOfRangeException(NameOf(totalStepIndex), "Argument totalStepIndex=" & totalStepIndex.ToString(System.Globalization.CultureInfo.InvariantCulture) & ", but allowed range=0.." & TotalStepsCount - 1)
@@ -197,7 +265,7 @@ Public Class ProgressingTaskItem
     End Function
 
     ''' <summary>
-    ''' Aktuell laufender Schritt
+    ''' Gets the currently running step.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property RunningStep As ProgressingTaskStepBase
@@ -211,7 +279,7 @@ Public Class ProgressingTaskItem
     End Property
 
     ''' <summary>
-    ''' Zuweisen des übergeordneten Tasks zu allen Schritten
+    ''' Assigns this task as parent task to all steps.
     ''' </summary>
     Public Sub AssignParentTaskToAllSteps()
         For Each CurrentStep In FirstStepsWhichCanBeRolledBack
@@ -225,11 +293,16 @@ Public Class ProgressingTaskItem
         Next
     End Sub
 
+    ''' <summary>
+    ''' Gets or sets a value indicating whether cancellation is allowed while running critical steps without rollback.
+    ''' </summary>
     Public Property AllowCancellationWhileRunningSecondStepsWithoutRollbackOption As Boolean
 
     ''' <summary>
-    ''' Ausführen aller Schritte
+    ''' Runs all steps asynchronously.
     ''' </summary>
+    ''' <param name="cancellationToken">The cancellation token used to request cancellation.</param>
+    ''' <returns>A task that represents the asynchronous run operation.</returns>
     Public Async Function RunAllStepsAsync(cancellationToken As Threading.CancellationToken) As Task
         Select Case Status
             Case ProgressingTaskItem.ProgressingTaskStatus.NotStarted
@@ -359,6 +432,9 @@ Public Class ProgressingTaskItem
         End Select
     End Function
 
+    ''' <summary>
+    ''' Gets or sets the exceptions logged during task execution.
+    ''' </summary>
     Public Property LoggedExceptions As New List(Of Exception)
 
     ''' <summary>
@@ -375,9 +451,9 @@ Public Class ProgressingTaskItem
     End Sub
 
     ''' <summary>
-    ''' Estimated time to run all steps
+    ''' Gets the estimated duration for all steps.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>The estimated duration, or <see langword="Nothing"/> if no estimate is available.</returns>
     Public Function EstimatedTimeToRun() As TimeSpan?
         Dim Result As TimeSpan?
         For Each CurrentStep In FirstStepsWhichCanBeRolledBack
@@ -400,9 +476,9 @@ Public Class ProgressingTaskItem
     End Function
 
     ''' <summary>
-    ''' Estimated remaining time to run
+    ''' Gets the estimated remaining duration for all steps.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>The estimated remaining duration, or <see langword="Nothing"/> if no estimate is available.</returns>
     Public ReadOnly Property EstimatedTimeOfArrival() As TimeSpan?
         Get
             If Me.RunningTotalStepIndex.HasValue = False OrElse Me.RunningTotalStepIndex < 0 OrElse Me.TotalStepsCount = 0 Then
@@ -433,9 +509,9 @@ Public Class ProgressingTaskItem
     Private _EndTime As DateTime?
 
     ''' <summary>
-    ''' Consumed time since start
+    ''' Gets the consumed runtime since the task started.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>The consumed runtime, or <see langword="Nothing"/> if the task has not started.</returns>
     Public ReadOnly Property ConsumedTime As TimeSpan?
         Get
             If _StartTime.HasValue = False Then
@@ -449,9 +525,10 @@ Public Class ProgressingTaskItem
     End Property
 
     ''' <summary>
-    ''' Statistik zur verbrauchten Laufzeit zur Verwendung in Protokollen und Tooltips
+    ''' Creates consumed runtime statistics for logs and tooltips.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <param name="fullLength">A value indicating whether all step details shall be included.</param>
+    ''' <returns>The consumed runtime statistics text.</returns>
     Public Function ConsumedTimeStatisticsInfo(Optional fullLength As Boolean = False) As String
         Dim Result As New Text.StringBuilder
         Result.AppendLine("Consumed time statistics for task:")
@@ -487,9 +564,8 @@ Public Class ProgressingTaskItem
     End Function
 
     ''' <summary>
-    ''' Textdarstellung des Task-Items aus Titel und Status
+    ''' Gets a display text containing the task title and status.
     ''' </summary>
-    ''' <returns></returns>
     Public ReadOnly Property DisplayTitleAndStatus As String
         Get
             Return Me.TaskTitle & " [" & Me.Status.ToString() & "]"
@@ -497,17 +573,18 @@ Public Class ProgressingTaskItem
     End Property
 
     ''' <summary>
-    ''' Textdarstellung des Task-Items aus Titel und Status
+    ''' Returns a display text containing the task title and status.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>The task title and status.</returns>
     Public Overrides Function ToString() As String
         Return Me.TaskTitle & " [" & Me.Status.ToString() & "]"
     End Function
 
     ''' <summary>
-    ''' Textdarstellung der gesammelten Exceptions
+    ''' Gets a plain text representation of the logged exceptions.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <param name="fullLength">A value indicating whether full exception details shall be included.</param>
+    ''' <returns>The logged exceptions as plain text.</returns>
     Public ReadOnly Property LoggedExceptionsToPlainText(fullLength As Boolean) As String
         Get
             Dim Result As New Text.StringBuilder
@@ -527,9 +604,8 @@ Public Class ProgressingTaskItem
     Private ReadOnly _CollectedWarnings As List(Of ValueTuple(Of String, String)) = New List(Of ValueTuple(Of String, String))
 
     ''' <summary>
-    ''' Die gesammelten Warnungen
+    ''' Gets the warnings collected for this task.
     ''' </summary>
-    ''' <returns></returns>
     Public ReadOnly Property CollectedWarnings As List(Of ValueTuple(Of String, String))
         Get
             Return _CollectedWarnings
@@ -537,18 +613,18 @@ Public Class ProgressingTaskItem
     End Property
 
     ''' <summary>
-    ''' Warnung hinzufügen
+    ''' Adds a warning with the current stack trace.
     ''' </summary>
-    ''' <param name="warning"></param>
+    ''' <param name="warning">The warning text.</param>
     Public Sub AddWarning(warning As String)
         AddWarning(warning, GetStackTraceWithoutLastMethod)
     End Sub
 
     ''' <summary>
-    ''' Warnung hinzufügen
+    ''' Adds a warning with an explicit stack trace.
     ''' </summary>
-    ''' <param name="warning"></param>
-    ''' <param name="stacktrace"></param>
+    ''' <param name="warning">The warning text.</param>
+    ''' <param name="stacktrace">The stack trace text.</param>
     Public Sub AddWarning(warning As String, stacktrace As String)
         CollectedWarnings.Add(New ValueTuple(Of String, String)(warning, stacktrace))
     End Sub
@@ -572,9 +648,9 @@ Public Class ProgressingTaskItem
     End Function
 
     ''' <summary>
-    ''' Textdarstellung der gesammelten Warnungen
+    ''' Creates a text representation of the collected warnings.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>The collected warnings as text, or <see langword="Nothing"/> if no warnings were collected.</returns>
     Public Function CollectedWarningsText() As String
         If Me.CollectedWarnings.Count <> 0 Then
             Dim Result As New System.Text.StringBuilder
@@ -601,10 +677,10 @@ Public Class ProgressingTaskItem
     End Function
 
     ''' <summary>
-    ''' Status-Zusammenfassung des Task-Items
+    ''' Creates a status summary for this task.
     ''' </summary>
-    ''' <param name="fullLength"></param>
-    ''' <returns></returns>
+    ''' <param name="fullLength">A value indicating whether full details shall be included.</param>
+    ''' <returns>The task summary text.</returns>
     Public Function SummaryText(Optional fullLength As Boolean = False) As String
         Dim Result As New System.Text.StringBuilder
         Result.Append(Me.LoggedExceptionsToPlainText(fullLength)) 'either empty or contains exceptions with line-break after last exception

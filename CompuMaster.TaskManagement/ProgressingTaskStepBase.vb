@@ -1,15 +1,18 @@
 ﻿Imports CompuMaster.TaskManagement.ProgressingTaskBundle
 Imports CompuMaster.TaskManagement.Exceptions
 
+''' <summary>
+''' Provides common state and execution logic for task steps.
+''' </summary>
 Public MustInherit Class ProgressingTaskStepBase
 
     ''' <summary>
-    ''' Step action item - Step action doesn't need any try-catch handling
+    ''' Initializes a new task step.
     ''' </summary>
-    ''' <param name="stepTitle"></param>
-    ''' <param name="stepAction"></param>
-    ''' <param name="estimatedTimeToRun"></param>
-    ''' <param name="failAction"></param>
+    ''' <param name="stepTitle">The display title of the step.</param>
+    ''' <param name="stepAction">The action to execute for the step.</param>
+    ''' <param name="estimatedTimeToRun">The estimated duration of the step, or <see langword="Nothing"/> if the duration is unknown.</param>
+    ''' <param name="failAction">The action to apply when the step fails.</param>
     Public Sub New(stepTitle As String, stepAction As StepActionMethod, estimatedTimeToRun As TimeSpan?, failAction As ProgressingTaskStepFailAction)
         If failAction = ProgressingTaskStepFailAction.DependingOnResultOfStepActionMethodWithFailAction Then Throw New ArgumentException("Not supported: fail action = " & failAction.ToString, NameOf(failAction))
         Me.StepTitle = stepTitle
@@ -19,11 +22,11 @@ Public MustInherit Class ProgressingTaskStepBase
     End Sub
 
     ''' <summary>
-    ''' Step action item - Step action must catch exceptions and assign result ProgressingTaskStepDynamicFailAction
+    ''' Initializes a new task step with a dynamic fail action.
     ''' </summary>
-    ''' <param name="stepTitle"></param>
-    ''' <param name="stepAction"></param>
-    ''' <param name="estimatedTimeToRun"></param>
+    ''' <param name="stepTitle">The display title of the step.</param>
+    ''' <param name="stepAction">The action to execute for the step and return the step result.</param>
+    ''' <param name="estimatedTimeToRun">The estimated duration of the step, or <see langword="Nothing"/> if the duration is unknown.</param>
     Protected Sub New(stepTitle As String, stepAction As StepActionMethodWithFailAction, estimatedTimeToRun As TimeSpan?)
         Me.StepTitle = stepTitle
         Me.StepActionWithFailAction = stepAction
@@ -32,25 +35,47 @@ Public MustInherit Class ProgressingTaskStepBase
     End Sub
 
     ''' <summary>
-    ''' A method with actions for this step - Step action doesn't need any try-catch handling
+    ''' Represents a method that executes a step action.
     ''' </summary>
-    ''' <param name="taskStep"></param>
+    ''' <param name="taskStep">The step that is being executed.</param>
     Public Delegate Sub StepActionMethod(taskStep As ProgressingTaskStepBase)
 
     ''' <summary>
-    ''' A method with actions for this step - Step action must catch exceptions and assign FailAction before re-throwing the exception
+    ''' Represents a method that executes a step action and returns the failure behavior.
     ''' </summary>
-    ''' <param name="taskstep"></param>
-    ''' <returns></returns>
+    ''' <param name="taskstep">The step that is being executed.</param>
+    ''' <returns>The result of the step action.</returns>
 
     Public Delegate Function StepActionMethodWithFailAction(taskstep As ProgressingTaskStepBase) As TaskStepActionResult
 
+    ''' <summary>
+    ''' Gets or sets the parent task that owns this step.
+    ''' </summary>
     Public Property ParentTask As ProgressingTaskItem
+
+    ''' <summary>
+    ''' Gets or sets the display title of the step.
+    ''' </summary>
     Public Property StepTitle As String
+
+    ''' <summary>
+    ''' Gets or sets the action to execute for the step.
+    ''' </summary>
     Public Property StepAction As StepActionMethod
+
+    ''' <summary>
+    ''' Gets or sets the dynamic action to execute for the step.
+    ''' </summary>
     Public Property StepActionWithFailAction As StepActionMethodWithFailAction
+
+    ''' <summary>
+    ''' Gets or sets the estimated duration of the step.
+    ''' </summary>
     Public Property EstimatedTimeToRun As TimeSpan?
 
+    ''' <summary>
+    ''' Gets the estimated remaining duration of the step.
+    ''' </summary>
     Public ReadOnly Property EstimatedTimeOfArrival As TimeSpan?
         Get
             If Me.EstimatedTimeToRun.HasValue = False Then
@@ -74,6 +99,9 @@ Public MustInherit Class ProgressingTaskStepBase
 
     Friend Property StepExecutionResult As TaskStepActionResult
 
+    ''' <summary>
+    ''' Runs the step action.
+    ''' </summary>
     Public Sub Run()
         Select Case Me.Status
             Case ProgressingTaskStepStatus.NotStarted
@@ -120,7 +148,7 @@ Public MustInherit Class ProgressingTaskStepBase
     Private _StartTime As DateTime?
     Private _EndTime As DateTime?
     ''' <summary>
-    ''' Lauzeit
+    ''' Gets the consumed runtime of the step.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property ConsumedTime As TimeSpan?
@@ -135,50 +163,90 @@ Public MustInherit Class ProgressingTaskStepBase
         End Get
     End Property
 
+    ''' <summary>
+    ''' Defines the execution status of a task step.
+    ''' </summary>
     Public Enum ProgressingTaskStepStatus As Byte
+        ''' <summary>
+        ''' The step has not started.
+        ''' </summary>
         NotStarted = 0
+        ''' <summary>
+        ''' The step is running.
+        ''' </summary>
         InProgress = 1
+        ''' <summary>
+        ''' The step completed successfully.
+        ''' </summary>
         Completed = 2
+        ''' <summary>
+        ''' The step failed.
+        ''' </summary>
         Failed = 3
     End Enum
 
+    ''' <summary>
+    ''' Gets or sets the execution status of the step.
+    ''' </summary>
     Public Property Status As ProgressingTaskStepStatus = ProgressingTaskStepStatus.NotStarted
 
+    ''' <summary>
+    ''' Defines how a failed task step is handled.
+    ''' </summary>
     Public Enum ProgressingTaskStepFailAction As Integer
         ''' <summary>
-        ''' The delegate method of type StepActionMethodWithFailAction also declares the fail action
+        ''' The step action result declares the fail action.
         ''' </summary>
         DependingOnResultOfStepActionMethodWithFailAction = -1
         ''' <summary>
-        ''' Log the exception, mark this step as failed (will lead to continue with next step in ProgressingTaskItem)
+        ''' Logs the exception and continues with the next step.
         ''' </summary>
         LogExceptionAndContinue = 0
         ''' <summary>
-        ''' Log the exception, mark this step as failed, throw the exception (will lead to fail ProgressingTaskItem.RunAllSteps)
+        ''' Logs the exception and throws it to fail the task.
         ''' </summary>
         ThrowException = 1
     End Enum
 
+    ''' <summary>
+    ''' Gets or sets the action to apply when the step fails.
+    ''' </summary>
     Public Property FailAction As ProgressingTaskStepFailAction
 
+    ''' <summary>
+    ''' Gets or sets the exception found during step execution.
+    ''' </summary>
     Public Property FoundException As Exception
 
+    ''' <inheritdoc/>
     Public Overrides Function ToString() As String
         Return Me.StepTitle & " [" & Me.Status.ToString() & "]"
     End Function
 
     Private ReadOnly _CollectedWarnings As List(Of ValueTuple(Of String, String)) = New List(Of ValueTuple(Of String, String))
 
+    ''' <summary>
+    ''' Gets the warnings collected for this step.
+    ''' </summary>
     Public ReadOnly Property CollectedWarnings As List(Of ValueTuple(Of String, String))
         Get
             Return _CollectedWarnings
         End Get
     End Property
 
+    ''' <summary>
+    ''' Adds a warning with the current stack trace.
+    ''' </summary>
+    ''' <param name="warning">The warning text.</param>
     Public Sub AddWarning(warning As String)
         AddWarning(warning, GetStackTraceWithoutLastMethod)
     End Sub
 
+    ''' <summary>
+    ''' Adds a warning with an explicit stack trace.
+    ''' </summary>
+    ''' <param name="warning">The warning text.</param>
+    ''' <param name="stacktrace">The stack trace text.</param>
     Public Sub AddWarning(warning As String, stacktrace As String)
         CollectedWarnings.Add(New ValueTuple(Of String, String)(warning, stacktrace))
     End Sub
@@ -197,6 +265,9 @@ Public MustInherit Class ProgressingTaskStepBase
         Return String.Join(Environment.NewLine, stackTraceWithoutLastMethod)
     End Function
 
+    ''' <summary>
+    ''' Gets a value indicating whether the step is currently running.
+    ''' </summary>
     Public ReadOnly Property IsRunningOrAbortingOrFailing As Boolean
         Get
             Select Case Me.Status

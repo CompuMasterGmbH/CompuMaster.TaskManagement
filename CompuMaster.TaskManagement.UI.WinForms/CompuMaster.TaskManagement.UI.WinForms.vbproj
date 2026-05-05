@@ -19,6 +19,7 @@
     <MyType>WindowsForms</MyType>
     <OptionInfer>On</OptionInfer>
     <OptionStrict>On</OptionStrict>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>logo_64x64.png</PackageIcon>
     <PackageProjectUrl>https://github.com/CompuMasterGmbH/CompuMaster.TaskManagement</PackageProjectUrl>

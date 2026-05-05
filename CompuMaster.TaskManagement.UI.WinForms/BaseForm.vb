@@ -1,6 +1,13 @@
-﻿<DebuggerStepThrough> Public Class BaseForm
+﻿''' <summary>
+''' Provides a Windows Forms base form with a shared default icon.
+''' </summary>
+<DebuggerStepThrough>
+Public Class BaseForm
     Inherits System.Windows.Forms.Form
 
+    ''' <summary>
+    ''' Gets or sets the default icon assigned to forms derived from this base form.
+    ''' </summary>
     Public Shared Property DefaultIcon As Icon
 
     Private Sub BierdeckelForm_Load(sender As Object, e As EventArgs) Handles Me.Load

@@ -1,25 +1,49 @@
 ﻿Imports CompuMaster.TaskManagement.ProgressingTaskItem
 
+''' <summary>
+''' Represents a bundle of progressing tasks.
+''' </summary>
 Public Class ProgressingTaskBundle
 
+    ''' <summary>
+    ''' Initializes a new task bundle.
+    ''' </summary>
+    ''' <param name="title">The display title of the task bundle.</param>
     Public Sub New(title As String)
         Me.TaskBundleTitle = title
     End Sub
 
+    ''' <summary>
+    ''' Gets or sets the display title of the task bundle.
+    ''' </summary>
     Public Property TaskBundleTitle As String
 
     Private ReadOnly _Tasks As New List(Of ProgressingTaskItem)
 
+    ''' <summary>
+    ''' Gets the tasks in this bundle.
+    ''' </summary>
     Public ReadOnly Property Tasks As IReadOnlyList(Of ProgressingTaskItem)
         Get
             Return _Tasks
         End Get
     End Property
 
+    ''' <summary>
+    ''' Creates a task and adds it to this bundle.
+    ''' </summary>
+    ''' <param name="taskTitle">The display title of the task.</param>
+    ''' <returns>The created task.</returns>
     Public Function CreateAndAddNewTask(taskTitle As String) As ProgressingTaskItem
         Return New ProgressingTaskItem(Me, taskTitle)
     End Function
 
+    ''' <summary>
+    ''' Creates a task with the specified run behavior and adds it to this bundle.
+    ''' </summary>
+    ''' <param name="taskTitle">The display title of the task.</param>
+    ''' <param name="runBehaviourIfPreviousTasksFailed">The run behavior when previous tasks failed or were cancelled.</param>
+    ''' <returns>The created task.</returns>
     Public Function CreateAndAddNewTask(taskTitle As String, runBehaviourIfPreviousTasksFailed As RunBehaviourIfPreviousTasksFailedEnum) As ProgressingTaskItem
         Return New ProgressingTaskItem(Me, taskTitle, runBehaviourIfPreviousTasksFailed)
     End Function
@@ -37,57 +61,76 @@ Public Class ProgressingTaskBundle
         _Tasks.Add(taskItem)
     End Sub
 
+    ''' <summary>
+    ''' Defines the execution status of a task bundle.
+    ''' </summary>
     Public Enum ProgressingTaskBundleStatus As Byte
         ''' <summary>
-        ''' Not yet started
+        ''' The task bundle has not started.
         ''' </summary>
         NotStarted = 0
         ''' <summary>
-        ''' Running regularly without any problems
+        ''' The task bundle is running.
         ''' </summary>
         InProgress = 1
         ''' <summary>
-        ''' Completed without any problems
+        ''' The task bundle completed successfully.
         ''' </summary>
         CompletedSuccessfully = 2
         ''' <summary>
-        ''' Failed non-critically (some tasks failed, but the whole task bundle ended and left the system in a defined/stable situation)
+        ''' The task bundle failed but ended in a defined state.
         ''' </summary>
         FailedNonCritically = 30
         ''' <summary>
-        ''' Failed in a critical status (some tasks failed and the whole task bundle stopped, leaving the system in an undefined/unstable/critical situation)
+        ''' The task bundle failed and ended in a critical state.
         ''' </summary>
         FailedInCriticalState = 31
         ''' <summary>
-        ''' User cancelled the task bundle execution (a rollback task ran successfully and left the system in a defined/stable situation)
+        ''' The user cancelled the task bundle and rollback completed successfully.
         ''' </summary>
         Aborted = 5
         ''' <summary>
-        ''' User requested to abort the task bundle execution (a rollback task is running and will leave the system in a defined/stable situation)
+        ''' The task bundle is aborting after a user cancellation request.
         ''' </summary>
         Aborting = 6
         ''' <summary>
-        ''' One or more task steps failed, so the task bundle will fail non-critically (some tasks failed, but the whole task bundle will end and leave the system in a defined/stable situation)
+        ''' The task bundle is failing but is expected to end in a defined state.
         ''' </summary>
         FailingNonCritically = 40
         ''' <summary>
-        ''' One or more task steps failed, so the task bundle will fail in a critical status (some tasks failed and the whole task bundle will stop, leaving the system in an undefined/unstable/critical situation)
+        ''' The task bundle is failing and is expected to end in a critical state.
         ''' </summary>
         FailingInCriticalState = 41
     End Enum
 
+    ''' <summary>
+    ''' Gets or sets the execution status of the task bundle.
+    ''' </summary>
     Public Property Status As ProgressingTaskBundle.ProgressingTaskBundleStatus = ProgressingTaskBundle.ProgressingTaskBundleStatus.NotStarted
 
+    ''' <summary>
+    ''' Requests cancellation for all running tasks.
+    ''' </summary>
     Public Sub CancelAllTasks()
         Me.CancellationTokenSource.Cancel()
     End Sub
 
+    ''' <summary>
+    ''' Gets the cancellation token source used by this task bundle.
+    ''' </summary>
     Public ReadOnly Property CancellationTokenSource As New Threading.CancellationTokenSource
 
+    ''' <summary>
+    ''' Runs all tasks asynchronously.
+    ''' </summary>
+    ''' <returns>A task that represents the asynchronous run operation.</returns>
     Public Async Function RunAllTasksAsync() As Task
         Await RunAllTasksAsync(Me.CancellationTokenSource.Token)
     End Function
 
+    ''' <summary>
+    ''' Runs all tasks synchronously.
+    ''' </summary>
     Public Sub RunAllTasks()
         RunAllTasksAsync(CancellationTokenSource.Token).GetAwaiter().GetResult()
     End Sub
@@ -199,12 +242,19 @@ Public Class ProgressingTaskBundle
         End Select
     End Function
 
+    ''' <summary>
+    ''' Gets the exceptions logged during task bundle execution.
+    ''' </summary>
     Public ReadOnly Property LoggedExceptions As New List(Of Exception)
 
+    ''' <inheritdoc/>
     Public Overrides Function ToString() As String
         Return Me.TaskBundleTitle & " [" & Me.Status.ToString() & "]"
     End Function
 
+    ''' <summary>
+    ''' Gets a value indicating whether the task bundle is running, aborting, or failing.
+    ''' </summary>
     Public ReadOnly Property IsRunningOrAbortingOrFailing As Boolean
         Get
             Select Case Me.Status
@@ -216,6 +266,9 @@ Public Class ProgressingTaskBundle
         End Get
     End Property
 
+    ''' <summary>
+    ''' Gets a value indicating whether the task bundle is running or failing.
+    ''' </summary>
     Public ReadOnly Property IsRunningOrFailing As Boolean
         Get
             Select Case Me.Status
@@ -228,7 +281,7 @@ Public Class ProgressingTaskBundle
     End Property
 
     ''' <summary>
-    ''' Estimated time to run all steps
+    ''' Gets the estimated duration for all tasks.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property EstimatedTimeToRun As TimeSpan?
@@ -246,7 +299,7 @@ Public Class ProgressingTaskBundle
     End Property
 
     ''' <summary>
-    ''' Estimated remaining time to run
+    ''' Gets the estimated remaining duration for all tasks.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property EstimatedTimeOfArrival As TimeSpan?
@@ -264,7 +317,7 @@ Public Class ProgressingTaskBundle
     End Property
 
     ''' <summary>
-    ''' The task bundle title, its status and (if availabe) the ETA (estimated time of arrival)
+    ''' Gets the task bundle title, status, and estimated time of arrival.
     ''' </summary>
     ''' <returns></returns>
     Public ReadOnly Property DisplayTitleAndStatusAndETA As String
@@ -313,9 +366,9 @@ Public Class ProgressingTaskBundle
     End Property
 
     ''' <summary>
-    ''' A summary text for display
+    ''' Creates a summary text for display.
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>The display summary.</returns>
     Public Function DisplaySummary() As String
         Dim Result As New System.Text.StringBuilder
         For Each TaskItem In Me.Tasks
